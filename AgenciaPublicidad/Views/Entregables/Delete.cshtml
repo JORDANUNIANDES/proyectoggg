@@ -1,0 +1,40 @@
+@model AgenciaPublicidad.Models.Entregable
+
+@{
+    ViewData["Title"] = "Eliminar Entregable";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 border-danger">
+            <div class="card-header bg-danger text-white py-3">
+                <h4 class="card-title mb-0 fw-bold">⚠️ ¿Está seguro de eliminar este entregable?</h4>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-danger fw-bold">Esta acción eliminará de forma permanente al entregable.</p>
+
+                <dl class="row">
+                    <dt class="col-sm-4 fw-bold text-secondary">Campaña</dt>
+                    <dd class="col-sm-8 text-dark fw-bold">@(Model.Campana?.nombre ?? "N/A")</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Diseñador Asignado</dt>
+                    <dd class="col-sm-8">@(Model.Disenador?.nombre ?? "N/A")</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Tipo de Entregable</dt>
+                    <dd class="col-sm-8"><span class="badge bg-secondary p-2">@Model.tipo</span></dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Fecha de Entrega</dt>
+                    <dd class="col-sm-8">@Model.fecha_entrega.ToString("dd/MM/yyyy")</dd>
+                </dl>
+
+                <form asp-action="Delete" class="mt-4 border-top pt-3">
+                    <input type="hidden" asp-for="entregable_id" />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Index" class="btn btn-secondary px-4">⬅️ Cancelar</a>
+                        <button type="submit" class="btn btn-danger px-4">🗑️ Confirmar Eliminación</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

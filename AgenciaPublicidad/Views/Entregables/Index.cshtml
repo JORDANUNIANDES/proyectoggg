@@ -1,0 +1,57 @@
+@model IEnumerable<AgenciaPublicidad.Models.Entregable>
+
+@{
+    ViewData["Title"] = "Entregables";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="text-info fw-bold">Entregables</h1>
+    <a asp-action="Create" class="btn btn-info text-white">🆕 Registrar Entregable</a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0 align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col" style="width: 80px;">ID</th>
+                        <th scope="col">Campaña</th>
+                        <th scope="col">Diseñador Asignado</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Fecha de Entrega</th>
+                        <th scope="col" class="text-center" style="width: 250px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No hay entregables registrados en el sistema.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <th scope="row" class="fw-bold text-secondary">@item.entregable_id</th>
+                                <td class="fw-bold text-dark">@(item.Campana?.nombre ?? "N/A")</td>
+                                <td>@(item.Disenador?.nombre ?? "N/A")</td>
+                                <td><span class="badge bg-secondary p-2">@item.tipo</span></td>
+                                <td>@item.fecha_entrega.ToString("dd/MM/yyyy")</td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Edit" asp-route-id="@item.entregable_id" class="btn btn-warning text-white">✏️ Editar</a>
+                                        <a asp-action="Details" asp-route-id="@item.entregable_id" class="btn btn-info text-white">👁️ Detalles</a>
+                                        <a asp-action="Delete" asp-route-id="@item.entregable_id" class="btn btn-danger">🗑️ Eliminar</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

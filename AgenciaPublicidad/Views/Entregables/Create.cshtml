@@ -1,0 +1,57 @@
+@model AgenciaPublicidad.Models.Entregable
+
+@{
+    ViewData["Title"] = "Registrar Entregable";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-info text-white py-3">
+                <h4 class="card-title mb-0 fw-bold">🆕 Registrar Entregable</h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="campana_id" class="form-label fw-bold">Campaña</label>
+                        <select asp-for="campana_id" class="form-select" asp-items="ViewBag.campana_id">
+                            <option value="">-- Seleccione una Campaña --</option>
+                        </select>
+                        <span asp-validation-for="campana_id" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="disenador_id" class="form-label fw-bold">Diseñador Asignado</label>
+                        <select asp-for="disenador_id" class="form-select" asp-items="ViewBag.disenador_id">
+                            <option value="">-- Seleccione un Diseñador --</option>
+                        </select>
+                        <span asp-validation-for="disenador_id" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="tipo" class="form-label fw-bold">Tipo de Entregable</label>
+                        <input asp-for="tipo" class="form-control" placeholder="Ej. Logo, Banner Web, Video Corporativo, etc." />
+                        <span asp-validation-for="tipo" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="fecha_entrega" class="form-label fw-bold"></label>
+                        <input asp-for="fecha_entrega" type="date" class="form-control" />
+                        <span asp-validation-for="fecha_entrega" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a asp-action="Index" class="btn btn-secondary px-4">⬅️ Volver al Listado</a>
+                        <button type="submit" class="btn btn-info text-white px-4">💾 Guardar Entregable</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

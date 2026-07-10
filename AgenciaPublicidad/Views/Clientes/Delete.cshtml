@@ -1,0 +1,40 @@
+@model AgenciaPublicidad.Models.Cliente
+
+@{
+    ViewData["Title"] = "Eliminar Cliente";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 border-danger">
+            <div class="card-header bg-danger text-white py-3">
+                <h4 class="card-title mb-0 fw-bold">⚠️ ¿Está seguro de eliminar este cliente?</h4>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-danger fw-bold">Esta acción eliminará de forma permanente al cliente y todas sus campañas y entregables asociados.</p>
+
+                <dl class="row">
+                    <dt class="col-sm-4 fw-bold text-secondary">Nombre de Empresa</dt>
+                    <dd class="col-sm-8 text-dark fw-bold">@Model.nombre_empresa</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Contacto Principal</dt>
+                    <dd class="col-sm-8">@Model.contacto</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Teléfono</dt>
+                    <dd class="col-sm-8">@Model.telefono</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Email</dt>
+                    <dd class="col-sm-8">@Model.email</dd>
+                </dl>
+
+                <form asp-action="Delete" class="mt-4 border-top pt-3">
+                    <input type="hidden" asp-for="cliente_id" />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Index" class="btn btn-secondary px-4">⬅️ Cancelar</a>
+                        <button type="submit" class="btn btn-danger px-4">🗑️ Confirmar Eliminación</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+@model AgenciaPublicidad.Models.Disenador
+
+@{
+    ViewData["Title"] = "Eliminar Diseñador";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 border-danger">
+            <div class="card-header bg-danger text-white py-3">
+                <h4 class="card-title mb-0 fw-bold">⚠️ ¿Está seguro de eliminar este diseñador?</h4>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-danger fw-bold">Esta acción eliminará de forma permanente al diseñador. Los entregables que tenga asignados no podrán ser eliminados automáticamente si la base de datos restringe la eliminación, por lo que se recomienda reasignar sus tareas antes de proceder.</p>
+
+                <dl class="row">
+                    <dt class="col-sm-4 fw-bold text-secondary">Nombre</dt>
+                    <dd class="col-sm-8 text-dark fw-bold">@Model.nombre</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Especialidad</dt>
+                    <dd class="col-sm-8">@Model.especialidad</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Email</dt>
+                    <dd class="col-sm-8">@Model.email</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Teléfono</dt>
+                    <dd class="col-sm-8">@Model.telefono</dd>
+                </dl>
+
+                <form asp-action="Delete" class="mt-4 border-top pt-3">
+                    <input type="hidden" asp-for="disenador_id" />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Index" class="btn btn-secondary px-4">⬅️ Cancelar</a>
+                        <button type="submit" class="btn btn-danger px-4">🗑️ Confirmar Eliminación</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

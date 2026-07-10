@@ -1,0 +1,55 @@
+@model AgenciaPublicidad.Models.Campana
+
+@{
+    ViewData["Title"] = "Registrar Campaña";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-success text-white py-3">
+                <h4 class="card-title mb-0 fw-bold">🆕 Registrar Campaña</h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="cliente_id" class="form-label fw-bold">Cliente</label>
+                        <select asp-for="cliente_id" class="form-select" asp-items="ViewBag.cliente_id">
+                            <option value="">-- Seleccione un Cliente --</option>
+                        </select>
+                        <span asp-validation-for="cliente_id" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="nombre" class="form-label fw-bold"></label>
+                        <input asp-for="nombre" class="form-control" placeholder="Ej. Campaña de Verano 2026" />
+                        <span asp-validation-for="nombre" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="presupuesto" class="form-label fw-bold"></label>
+                        <input asp-for="presupuesto" type="number" step="0.01" class="form-control" placeholder="Ej. 15000.00" />
+                        <span asp-validation-for="presupuesto" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="fecha_inicio" class="form-label fw-bold"></label>
+                        <input asp-for="fecha_inicio" type="date" class="form-control" />
+                        <span asp-validation-for="fecha_inicio" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a asp-action="Index" class="btn btn-secondary px-4">⬅️ Volver al Listado</a>
+                        <button type="submit" class="btn btn-success px-4">💾 Guardar Campaña</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
