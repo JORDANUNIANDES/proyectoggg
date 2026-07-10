@@ -1,0 +1,40 @@
+@model AgenciaPublicidad.Models.Campana
+
+@{
+    ViewData["Title"] = "Eliminar Campaña";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 border-danger">
+            <div class="card-header bg-danger text-white py-3">
+                <h4 class="card-title mb-0 fw-bold">⚠️ ¿Está seguro de eliminar esta campaña?</h4>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-danger fw-bold">Esta acción eliminará de forma permanente la campaña y todos los entregables asociados a ella.</p>
+
+                <dl class="row">
+                    <dt class="col-sm-4 fw-bold text-secondary">Nombre de Campaña</dt>
+                    <dd class="col-sm-8 text-dark fw-bold">@Model.nombre</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Cliente</dt>
+                    <dd class="col-sm-8">@(Model.Cliente?.nombre_empresa ?? "N/A")</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Presupuesto</dt>
+                    <dd class="col-sm-8 text-success fw-bold">@Model.presupuesto.ToString("C")</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Fecha de Inicio</dt>
+                    <dd class="col-sm-8">@Model.fecha_inicio.ToString("dd/MM/yyyy")</dd>
+                </dl>
+
+                <form asp-action="Delete" class="mt-4 border-top pt-3">
+                    <input type="hidden" asp-for="campana_id" />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Index" class="btn btn-secondary px-4">⬅️ Cancelar</a>
+                        <button type="submit" class="btn btn-danger px-4">🗑️ Confirmar Eliminación</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+@model AgenciaPublicidad.Models.Cliente
+
+@{
+    ViewData["Title"] = "Detalles de Cliente";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-info text-white py-3">
+                <h4 class="card-title mb-0 fw-bold">👁️ Detalles de Cliente</h4>
+            </div>
+            <div class="card-body p-4">
+                <dl class="row">
+                    <dt class="col-sm-4 fw-bold text-secondary">ID de Cliente</dt>
+                    <dd class="col-sm-8 text-dark fw-bold">@Model.cliente_id</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Nombre de Empresa</dt>
+                    <dd class="col-sm-8">@Model.nombre_empresa</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Contacto Principal</dt>
+                    <dd class="col-sm-8">@Model.contacto</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Teléfono</dt>
+                    <dd class="col-sm-8">@Model.telefono</dd>
+
+                    <dt class="col-sm-4 fw-bold text-secondary">Email</dt>
+                    <dd class="col-sm-8">@Model.email</dd>
+                </dl>
+
+                <div class="d-flex justify-content-between align-items-center mt-4 border-top pt-3">
+                    <a asp-action="Index" class="btn btn-secondary px-4">⬅️ Volver al Listado</a>
+                    <a asp-action="Edit" asp-route-id="@Model.cliente_id" class="btn btn-warning text-white px-4">✏️ Editar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

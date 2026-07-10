@@ -1,0 +1,22 @@
+# .gitignore for .NET
+bin/
+obj/
+**/bin/
+**/obj/
+*.user
+*.userosscache
+*.sln.docstate
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# OS files
+.DS_Store
+Thumbs.db

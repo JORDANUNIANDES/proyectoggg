@@ -1,0 +1,62 @@
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class="text-center my-5">
+    <h1 class="display-4 fw-bold text-primary">Sistema de Gestión de Agencia de Publicidad</h1>
+    <p class="lead text-secondary mt-3">Bienvenido al sistema integrado para la administración de clientes, campañas publicitarias, diseñadores y entregables.</p>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 g-4 mt-4">
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0 bg-light">
+            <div class="card-body text-center p-4">
+                <div class="mb-3 text-primary">
+                    <span style="font-size: 3rem;">🏢</span>
+                </div>
+                <h3 class="card-title fw-bold">Clientes</h3>
+                <p class="card-text text-muted">Administra el listado de empresas clientes, sus contactos principales, teléfonos y correos electrónicos.</p>
+                <a asp-controller="Clientes" asp-action="Index" class="btn btn-primary px-4 mt-2">Gestionar Clientes</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0 bg-light">
+            <div class="card-body text-center p-4">
+                <div class="mb-3 text-success">
+                    <span style="font-size: 3rem;">📣</span>
+                </div>
+                <h3 class="card-title fw-bold">Campañas</h3>
+                <p class="card-text text-muted">Administra las campañas publicitarias vigentes, presupuestos asignados y sus respectivas fechas de inicio.</p>
+                <a asp-controller="Campanas" asp-action="Index" class="btn btn-success px-4 mt-2">Gestionar Campañas</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0 bg-light">
+            <div class="card-body text-center p-4">
+                <div class="mb-3 text-warning">
+                    <span style="font-size: 3rem;">🎨</span>
+                </div>
+                <h3 class="card-title fw-bold">Diseñadores</h3>
+                <p class="card-text text-muted">Administra el equipo de diseñadores, registrando sus especialidades, teléfonos y correos de contacto.</p>
+                <a asp-controller="Disenadores" asp-action="Index" class="btn btn-warning text-white px-4 mt-2">Gestionar Diseñadores</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0 bg-light">
+            <div class="card-body text-center p-4">
+                <div class="mb-3 text-info">
+                    <span style="font-size: 3rem;">📦</span>
+                </div>
+                <h3 class="card-title fw-bold">Entregables</h3>
+                <p class="card-text text-muted">Administra los entregables asignados a los diseñadores y vinculados a sus respectivas campañas publicitarias.</p>
+                <a asp-controller="Entregables" asp-action="Index" class="btn btn-info text-white px-4 mt-2">Gestionar Entregables</a>
+            </div>
+        </div>
+    </div>
+</div>

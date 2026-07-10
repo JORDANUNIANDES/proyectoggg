@@ -1,0 +1,53 @@
+@model AgenciaPublicidad.Models.Cliente
+
+@{
+    ViewData["Title"] = "Registrar Cliente";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white py-3">
+                <h4 class="card-title mb-0 fw-bold">🆕 Registrar Cliente</h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="nombre_empresa" class="form-label fw-bold"></label>
+                        <input asp-for="nombre_empresa" class="form-control" placeholder="Ej. ACME Corp" />
+                        <span asp-validation-for="nombre_empresa" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="contacto" class="form-label fw-bold"></label>
+                        <input asp-for="contacto" class="form-control" placeholder="Ej. Juan Pérez" />
+                        <span asp-validation-for="contacto" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="telefono" class="form-label fw-bold"></label>
+                        <input asp-for="telefono" class="form-control" placeholder="Ej. +56912345678" />
+                        <span asp-validation-for="telefono" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="email" class="form-label fw-bold"></label>
+                        <input asp-for="email" class="form-control" placeholder="Ej. contacto@acme.com" />
+                        <span asp-validation-for="email" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a asp-action="Index" class="btn btn-secondary px-4">⬅️ Volver al Listado</a>
+                        <button type="submit" class="btn btn-primary px-4">💾 Guardar Cliente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
