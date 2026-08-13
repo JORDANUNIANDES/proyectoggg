@@ -1,0 +1,244 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MUSCLE HOUSE</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MuscleHouse.styles.css" asp-append-version="true" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md navbar-mh">
+            <div class="container-fluid">
+                <a class="navbar-brand navbar-brand-mh" asp-controller="Home" asp-action="Index">
+                    MUSCLE <span>HOUSE</span>
+                </a>
+                <button class="navbar-toggler btn-mh-orange text-white" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar" aria-controls="topNavbar"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="topNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Personal">Personal Público</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center gap-3">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <span class="text-white small d-none d-sm-inline">
+                                <i class="bi bi-person-circle text-orange"></i> @User.Identity.Name
+                            </span>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-light">
+                                    <i class="bi bi-box-arrow-right"></i> Salir
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-mh-orange px-3">
+                                <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="wrapper-mh">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <aside class="sidebar-mh">
+                <div class="d-flex flex-column h-100 py-3">
+                    <ul class="nav flex-column mb-auto">
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">
+                                    <i class="bi bi-speedometer2 text-orange"></i> Dashboard Admin
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Clientes">
+                                    <i class="bi bi-people text-orange"></i> Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Entrenadores">
+                                    <i class="bi bi-person-workspace text-orange"></i> Entrenadores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Recepcionistas">
+                                    <i class="bi bi-person-vcard text-orange"></i> Recepcionistas
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Planes">
+                                    <i class="bi bi-tag text-orange"></i> Planes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Membresias">
+                                    <i class="bi bi-card-checklist text-orange"></i> Membresías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Pagos">
+                                    <i class="bi bi-cash-stack text-orange"></i> Pagos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Asistencias">
+                                    <i class="bi bi-calendar-check text-orange"></i> Asistencias
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Ejercicios">
+                                    <i class="bi bi-activity text-orange"></i> Ejercicios
+                                </a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Recepcionista"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Recepcionista" asp-action="Dashboard">
+                                    <i class="bi bi-speedometer2 text-orange"></i> Dashboard Recep
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Recepcionista" asp-action="Clientes">
+                                    <i class="bi bi-people text-orange"></i> Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Recepcionista" asp-action="Membresias">
+                                    <i class="bi bi-card-checklist text-orange"></i> Membresías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Recepcionista" asp-action="Pagos">
+                                    <i class="bi bi-cash-stack text-orange"></i> Pagos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Recepcionista" asp-action="Asistencias">
+                                    <i class="bi bi-calendar-check text-orange"></i> Asistencias
+                                </a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Entrenador"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Entrenador" asp-action="Dashboard">
+                                    <i class="bi bi-speedometer2 text-orange"></i> Dashboard Coach
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Entrenador" asp-action="Clientes">
+                                    <i class="bi bi-people text-orange"></i> Mis Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Entrenador" asp-action="Rutinas">
+                                    <i class="bi bi-list-task text-orange"></i> Rutinas
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Entrenador" asp-action="Progreso">
+                                    <i class="bi bi-activity text-orange"></i> Progresos
+                                </a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Usuario"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Cliente" asp-action="Dashboard">
+                                    <i class="bi bi-speedometer2 text-orange"></i> Mi Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Cliente" asp-action="Perfil">
+                                    <i class="bi bi-person-vcard text-orange"></i> Mi Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Cliente" asp-action="Membresia">
+                                    <i class="bi bi-card-checklist text-orange"></i> Mi Membresía
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Cliente" asp-action="Pagos">
+                                    <i class="bi bi-cash-stack text-orange"></i> Mis Pagos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Cliente" asp-action="Asistencias">
+                                    <i class="bi bi-calendar-check text-orange"></i> Mis Asistencias
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Cliente" asp-action="Rutina">
+                                    <i class="bi bi-list-task text-orange"></i> Mi Rutina
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Cliente" asp-action="Progreso">
+                                    <i class="bi bi-activity text-orange"></i> Mi Progreso
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Chat" asp-action="Index">
+                                    <i class="bi bi-robot text-yellow"></i> Asistente IA
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </aside>
+        }
+
+        <main role="main" class="content-mh">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-mh-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill text-orange"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-mh-error alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer-mh">
+        <div class="container text-center">
+            <p class="m-0">&copy; 2026 - **MUSCLE HOUSE** - Sistema Web Inteligente de Gestión de Gimnasio. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

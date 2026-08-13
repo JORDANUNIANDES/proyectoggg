@@ -1,0 +1,223 @@
+﻿@model MuscleHouse.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Panel Administrativo Premium";
+}
+
+<div class="mb-4">
+    <h2 class="fw-bold text-orange"><i class="bi bi-speedometer2"></i> Dashboard Administrativo — MUSCLE HOUSE</h2>
+    <p class="text-gray">Visualización en tiempo real de métricas, estadísticas financieras y rendimiento de MUSCLE HOUSE.</p>
+</div>
+
+<!-- Key KPIs -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card card-mh p-4 text-center">
+            <h6 class="text-gray small text-uppercase">Total Clientes</h6>
+            <h2 class="display-5 fw-bold text-orange m-0">@Model.TotalClientes</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-mh p-4 text-center">
+            <h6 class="text-gray small text-uppercase">Membresías Activas</h6>
+            <h2 class="display-5 fw-bold text-yellow m-0">@Model.TotalMembresiasActivas</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-mh p-4 text-center">
+            <h6 class="text-gray small text-uppercase">Total Coaches</h6>
+            <h2 class="display-5 fw-bold text-light m-0">@Model.TotalEntrenadores</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-mh p-4 text-center">
+            <h6 class="text-gray small text-uppercase">Ingresos Totales</h6>
+            <h2 class="display-5 fw-bold text-orange m-0">$@Model.TotalIngresos.ToString("F2")</h2>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Graphics -->
+<div class="row g-4 mb-5">
+    <div class="col-md-6">
+        <div class="card card-mh">
+            <div class="card-mh-header text-orange"><i class="bi bi-pie-chart-fill"></i> Distribución de Membresías por Plan</div>
+            <div class="card-body" style="height: 320px; display: flex; align-items: center; justify-content: center;">
+                @if (Model.VentasPorPlan.Any())
+                {
+                    <canvas id="membresiasChart" style="max-height: 280px;"></canvas>
+                }
+                else
+                {
+                    <p class="text-gray m-0 italic">No hay suficientes datos de membresías.</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-mh">
+            <div class="card-mh-header text-orange"><i class="bi bi-wallet2"></i> Distribución de Ingresos por Método de Pago</div>
+            <div class="card-body" style="height: 320px; display: flex; align-items: center; justify-content: center;">
+                @if (Model.IngresosPorMetodoPago.Any())
+                {
+                    <canvas id="pagosChart" style="max-height: 280px;"></canvas>
+                }
+                else
+                {
+                    <p class="text-gray m-0 italic">No hay suficientes datos de transacciones de pago.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lists / Recents -->
+<div class="row g-4 mb-5">
+    <div class="col-md-6">
+        <div class="card card-mh h-100">
+            <div class="card-mh-header text-orange"><i class="bi bi-currency-dollar"></i> Cobros y Pagos Recientes</div>
+            <div class="card-body p-0">
+                @if (Model.PagosRecientes.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-mh w-100 m-0">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                    <th>Método</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in Model.PagosRecientes)
+                                {
+                                    <tr>
+                                        <td>@p.Fecha.ToString("dd/MM/yyyy")</td>
+                                        <td class="text-yellow fw-bold">$@p.Monto.ToString("F2")</td>
+                                        <td>@p.MetodoPago</td>
+                                        <td><span class="badge bg-success">@p.Estado</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="p-4 text-center">
+                        <p class="text-gray m-0 italic">No hay transacciones registradas.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card card-mh h-100">
+            <div class="card-mh-header text-orange"><i class="bi bi-clock-history"></i> Accesos y Asistencias Recientes</div>
+            <div class="card-body p-0">
+                @if (Model.AsistenciasRecientes.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-mh w-100 m-0">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Fecha y Hora</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in Model.AsistenciasRecientes)
+                                {
+                                    <tr>
+                                        <td>@a.Cliente?.Nombre @a.Cliente?.Apellido</td>
+                                        <td>@a.FechaHora.ToString("dd/MM/yyyy hh:mm tt")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="p-4 text-center">
+                        <p class="text-gray m-0 italic">No hay asistencias registradas hoy.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Chart.js color definitions to match MUSCLE HOUSE premium look
+            var orangeColor = '#ff6a00';
+            var yellowColor = '#ffb700';
+            var darkCardColor = '#1e1e1e';
+            var textLightColor = '#f5f5f5';
+
+            @if (Model.VentasPorPlan.Any())
+            {
+                var planLabels = Model.VentasPorPlan.Keys.ToList();
+                var planValues = Model.VentasPorPlan.Values.ToList();
+                <text>
+                new Chart(document.getElementById('membresiasChart').getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: @Html.Raw(Json.Serialize(planLabels)),
+                        datasets: [{
+                            data: @Html.Raw(Json.Serialize(planValues)),
+                            backgroundColor: [orangeColor, yellowColor, '#e05300', '#e09e00', '#ffc83b'],
+                            borderColor: '#2d2d2d',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { color: textLightColor }
+                            }
+                        }
+                    }
+                });
+                </text>
+            }
+
+            @if (Model.IngresosPorMetodoPago.Any())
+            {
+                var payLabels = Model.IngresosPorMetodoPago.Keys.ToList();
+                var payValues = Model.IngresosPorMetodoPago.Values.ToList();
+                <text>
+                new Chart(document.getElementById('pagosChart').getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: @Html.Raw(Json.Serialize(payLabels)),
+                        datasets: [{
+                            data: @Html.Raw(Json.Serialize(payValues)),
+                            backgroundColor: [orangeColor, yellowColor, '#555555'],
+                            borderColor: '#2d2d2d',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { color: textLightColor }
+                            }
+                        }
+                    }
+                });
+                </text>
+            }
+        });
+    </script>
+}

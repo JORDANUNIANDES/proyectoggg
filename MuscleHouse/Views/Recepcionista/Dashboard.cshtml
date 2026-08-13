@@ -1,0 +1,56 @@
+﻿@model MuscleHouse.ViewModels.RecepcionistaDashboardViewModel
+@{
+    ViewData["Title"] = "Panel de Recepción";
+}
+
+<div class="mb-4">
+    <h2 class="fw-bold text-orange"><i class="bi bi-speedometer2"></i> Dashboard Recepción — MUSCLE HOUSE</h2>
+    <p class="text-gray">Bienvenido al Panel de Control de Operaciones diarias de Recepción de MUSCLE HOUSE.</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card card-mh p-4 text-center">
+            <h5 class="text-gray small text-uppercase">Clientes Activos Registrados</h5>
+            <h2 class="display-5 fw-bold text-orange">@Model.TotalClientesActivos</h2>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-mh p-4 text-center">
+            <h5 class="text-gray small text-uppercase">Ingresos Totales en Caja</h5>
+            <h2 class="display-5 fw-bold text-yellow">$@Model.IngresosTotales.ToString("F2")</h2>
+        </div>
+    </div>
+</div>
+
+<div class="card card-mh mb-4">
+    <div class="card-mh-header text-orange">🕒 Asistencias Registradas Hoy</div>
+    <div class="card-body">
+        @if (Model.AsistenciasDeHoy.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-mh w-100 m-0">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Hora de Ingreso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var asg in Model.AsistenciasDeHoy)
+                        {
+                            <tr>
+                                <td>@asg.Cliente?.Nombre @asg.Cliente?.Apellido</td>
+                                <td>@asg.FechaHora.ToString("hh:mm tt")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-gray m-0 italic">No hay asistencias registradas el día de hoy.</p>
+        }
+    </div>
+</div>

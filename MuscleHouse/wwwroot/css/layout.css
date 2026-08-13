@@ -1,0 +1,72 @@
+/* Layout Structures for MUSCLE HOUSE */
+
+.navbar-mh {
+    background-color: var(--mh-dark-card);
+    border-bottom: 2px solid var(--mh-orange);
+    padding: 0.8rem 1.5rem;
+}
+
+.navbar-brand-mh {
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--mh-orange) !important;
+    letter-spacing: 1px;
+}
+
+.navbar-brand-mh span {
+    color: var(--mh-yellow);
+}
+
+.footer-mh {
+    background-color: var(--mh-dark-card);
+    border-top: 1px solid var(--mh-dark-border);
+    color: var(--mh-text-gray);
+    font-size: 0.9rem;
+    padding: 1rem 0;
+}
+
+/* Sidebar Navigation */
+.wrapper-mh {
+    display: flex;
+    min-height: calc(100vh - 120px);
+}
+
+.sidebar-mh {
+    width: 260px;
+    background-color: var(--mh-dark-card);
+    border-right: 1px solid var(--mh-dark-border);
+    transition: all 0.3s;
+}
+
+.sidebar-mh .nav-link {
+    color: var(--mh-text-light);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-mh .nav-link:hover,
+.sidebar-mh .nav-link.active {
+    color: var(--mh-orange);
+    background-color: rgba(255, 106, 0, 0.05);
+    border-left: 3px solid var(--mh-orange);
+}
+
+.content-mh {
+    flex: 1;
+    padding: 2rem;
+}
+
+@media (max-width: 768px) {
+    .wrapper-mh {
+        flex-direction: column;
+    }
+    .sidebar-mh {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--mh-dark-border);
+    }
+}

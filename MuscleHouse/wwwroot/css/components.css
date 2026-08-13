@@ -1,0 +1,99 @@
+/* Custom Dark Components for MUSCLE HOUSE */
+
+.card-mh {
+    background-color: var(--mh-dark-card);
+    border: 1px solid var(--mh-dark-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.card-mh:hover {
+    transform: translateY(-2px);
+    border-color: var(--mh-orange);
+}
+
+.card-mh-header {
+    background-color: rgba(255, 106, 0, 0.02);
+    border-bottom: 1px solid var(--mh-dark-border);
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+}
+
+/* Custom Buttons */
+.btn-mh-orange {
+    background-color: var(--mh-orange);
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.btn-mh-orange:hover {
+    background-color: var(--mh-orange-hover);
+    color: #fff;
+}
+
+.btn-mh-yellow {
+    background-color: var(--mh-yellow);
+    color: #121212;
+    font-weight: 600;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.btn-mh-yellow:hover {
+    background-color: var(--mh-yellow-hover);
+    color: #121212;
+}
+
+/* Dark themed Forms */
+.form-control-mh {
+    background-color: var(--mh-dark-bg);
+    border: 1px solid var(--mh-dark-border);
+    color: var(--mh-text-light) !important;
+}
+
+.form-control-mh:focus {
+    background-color: var(--mh-dark-bg);
+    border-color: var(--mh-orange);
+    box-shadow: 0 0 0 0.25rem rgba(255, 106, 0, 0.25);
+}
+
+/* Dark responsive tables */
+.table-mh {
+    color: var(--mh-text-light);
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-mh th {
+    background-color: var(--mh-dark-card);
+    color: var(--mh-orange);
+    font-weight: 600;
+    border-bottom: 2px solid var(--mh-dark-border);
+    padding: 1rem;
+}
+
+.table-mh td {
+    background-color: var(--mh-dark-bg);
+    border-bottom: 1px solid var(--mh-dark-border);
+    padding: 1rem;
+}
+
+.table-mh tr:hover td {
+    background-color: rgba(255, 106, 0, 0.02);
+}
+
+/* Alert notifications */
+.alert-mh-success {
+    background-color: rgba(255, 106, 0, 0.1);
+    border: 1px solid var(--mh-orange);
+    color: var(--mh-text-light);
+}
+
+.alert-mh-error {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid #dc3545;
+    color: var(--mh-text-light);
+}

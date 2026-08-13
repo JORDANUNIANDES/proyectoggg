@@ -1,0 +1,48 @@
+/* MUSCLE HOUSE Official Color Palette & Theme Styles */
+
+:root {
+    --mh-dark-bg: #121212;
+    --mh-dark-card: #1e1e1e;
+    --mh-dark-border: #2d2d2d;
+    --mh-orange: #ff6a00;
+    --mh-orange-hover: #e05300;
+    --mh-yellow: #ffb700;
+    --mh-yellow-hover: #e09e00;
+    --mh-text-light: #f5f5f5;
+    --mh-text-gray: #b0b0b0;
+}
+
+body {
+    background-color: var(--mh-dark-bg);
+    color: var(--mh-text-light);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+a {
+    color: var(--mh-orange);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--mh-yellow);
+}
+
+.text-orange {
+    color: var(--mh-orange) !important;
+}
+
+.text-yellow {
+    color: var(--mh-yellow) !important;
+}
+
+.bg-orange {
+    background-color: var(--mh-orange) !important;
+}
+
+.bg-yellow {
+    background-color: var(--mh-yellow) !important;
+}
+
+.bg-dark-card {
+    background-color: var(--mh-dark-card) !important;
+}
