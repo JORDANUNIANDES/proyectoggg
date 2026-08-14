@@ -43,7 +43,6 @@ namespace MuscleHouse.Controllers
             var payments = await _paymentService.GetAllPaymentsAsync();
             var attendance = await _attendanceService.GetAllAttendanceAsync();
 
-            // Correct concept of Active Clients: Client is Active and has an Active, non-expired membership
             var totalActiveClients = await _dbContext.Clientes
                 .CountAsync(c => c.Activo && c.Membresias.Any(m => m.Estado == "Activa" && m.FechaVencimiento >= DateTime.Today));
 
@@ -90,7 +89,6 @@ namespace MuscleHouse.Controllers
                 return View(model);
             }
 
-            // Create ApplicationUser
             var user = new ApplicationUser { UserName = model.Email, Email = model.Email, EmailConfirmed = true };
             var createResult = await _userManager.CreateAsync(user, model.Password);
             if (!createResult.Succeeded)
@@ -103,10 +101,8 @@ namespace MuscleHouse.Controllers
                 return View(model);
             }
 
-            // Add role
             await _userManager.AddToRoleAsync(user, "Usuario");
 
-            // Create Cliente
             var cliente = new Cliente
             {
                 UserId = user.Id,
@@ -122,7 +118,6 @@ namespace MuscleHouse.Controllers
             _dbContext.Clientes.Add(cliente);
             await _dbContext.SaveChangesAsync();
 
-            // Create historical assignment if a trainer was chosen
             if (model.EntrenadorId.HasValue)
             {
                 var newAsg = new AsignacionEntrenador
@@ -136,7 +131,6 @@ namespace MuscleHouse.Controllers
                 await _dbContext.SaveChangesAsync();
             }
 
-            // Also register standard notification for welcoming
             var notif = new Notificacion
             {
                 UserId = user.Id,
@@ -150,6 +144,33 @@ namespace MuscleHouse.Controllers
 
             TempData["SuccessMessage"] = $"¡Cliente {model.Nombre} {model.Apellido} registrado con éxito!";
             return RedirectToAction(nameof(Clientes));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Membresias()
+        {
+            var membresias = await _dbContext.Membresias
+                .Include(m => m.Cliente)
+                .Include(m => m.Plan)
+                .OrderByDescending(m => m.FechaInicio)
+                .ToListAsync();
+            ViewBag.Planes = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
+            return View(membresias);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Pagos()
+        {
+            var pagos = await _paymentService.GetAllPaymentsAsync();
+            return View(pagos);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Asistencias()
+        {
+            var asistencias = await _attendanceService.GetAllAttendanceAsync();
+            ViewBag.Clientes = await _dbContext.Clientes.Where(c => c.Activo).ToListAsync();
+            return View(asistencias);
         }
 
         [HttpPost]

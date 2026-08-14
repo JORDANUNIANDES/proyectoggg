@@ -1,0 +1,66 @@
+@model IEnumerable<MuscleHouse.Models.Asistencia>
+@{
+    ViewData["Title"] = "Asistencias - Recepción";
+    var clients = ViewBag.Clients as IEnumerable<MuscleHouse.Models.Cliente> ?? new List<MuscleHouse.Models.Cliente>();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-calendar-check me-2"></i>Control de Asistencias</h2>
+    <button type="button" class="btn btn-muscle" data-bs-toggle="modal" data-bs-target="#asistenciaModal">
+        <i class="bi bi-person-check me-1"></i>Registrar Asistencia
+    </button>
+</div>
+
+<!-- Modal Registrar Asistencia -->
+<div class="modal fade" id="asistenciaModal" tabindex="-1" aria-labelledby="asistenciaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="asistenciaModalLabel"><i class="bi bi-check-circle me-2 text-warning"></i>Check-in de Cliente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="RegistrarAsistencia" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Seleccionar Cliente</label>
+                        <select name="clienteId" class="form-select form-control-dark" required>
+                            <option value="">-- Buscar Cliente --</option>
+                            @foreach (var c in clients)
+                            {
+                                <option value="@c.Id">@c.Nombre @c.Apellido (@c.Telefono)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-muscle">Marcar Entrada</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="card card-dark p-3">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Fecha y Hora</th>
+                    <th>Cliente</th>
+                    <th>Teléfono</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td><i class="bi bi-clock me-2 text-warning"></i>@a.FechaHora.ToString("g")</td>
+                        <td><strong>@(a.Cliente != null ? $"{a.Cliente.Nombre} {a.Cliente.Apellido}" : $"Cliente #{a.ClienteId}")</strong></td>
+                        <td>@(a.Cliente != null ? a.Cliente.Telefono : "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MuscleHouse.Data;
 using MuscleHouse.Models;
 using MuscleHouse.Services;
 using MuscleHouse.ViewModels;
@@ -18,19 +20,22 @@ namespace MuscleHouse.Controllers
         private readonly IProgressService _progressService;
         private readonly ISecurityService _securityService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _dbContext;
 
         public EntrenadorController(
             IStaffService staffService,
             IWorkoutService workoutService,
             IProgressService progressService,
             ISecurityService securityService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ApplicationDbContext dbContext)
         {
             _staffService = staffService;
             _workoutService = workoutService;
             _progressService = progressService;
             _securityService = securityService;
             _userManager = userManager;
+            _dbContext = dbContext;
         }
 
         private string GetUserId() => _userManager.GetUserId(User) ?? string.Empty;
@@ -49,6 +54,25 @@ namespace MuscleHouse.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Perfil()
+        {
+            var trainerUserId = GetUserId();
+            var trainer = await _staffService.GetTrainerByUserIdAsync(trainerUserId);
+            if (trainer == null) return NotFound();
+
+            return View(trainer);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Clientes()
+        {
+            var trainerUserId = GetUserId();
+            var clients = await _staffService.GetAssignedClientsAsync(trainerUserId);
+            return View(clients);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> ClienteDetalles(int id)
         {
             var trainerUserId = GetUserId();
@@ -75,6 +99,40 @@ namespace MuscleHouse.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Rutinas()
+        {
+            var trainerUserId = GetUserId();
+            var trainer = await _staffService.GetTrainerByUserIdAsync(trainerUserId);
+            if (trainer == null) return NotFound();
+
+            var rutinas = await _dbContext.Rutinas
+                .Include(r => r.Cliente)
+                .Include(r => r.RutinaEjercicios)
+                .ThenInclude(re => re.Ejercicio)
+                .Where(r => r.EntrenadorId == trainer.Id)
+                .OrderByDescending(r => r.FechaCreacion)
+                .ToListAsync();
+
+            return View(rutinas);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Progreso()
+        {
+            var trainerUserId = GetUserId();
+            var clients = await _staffService.GetAssignedClientsAsync(trainerUserId);
+            var clientIds = clients.Select(c => c.Id).ToList();
+
+            var progresos = await _dbContext.Progresos
+                .Include(p => p.Cliente)
+                .Where(p => clientIds.Contains(p.ClienteId))
+                .OrderByDescending(p => p.Fecha)
+                .ToListAsync();
+
+            return View(progresos);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> CrearRutina(int clienteId)
         {
             var trainerUserId = GetUserId();
@@ -84,6 +142,7 @@ namespace MuscleHouse.Controllers
             }
 
             var model = new CreateRutinaViewModel { ClienteId = clienteId };
+            ViewBag.Ejercicios = await _workoutService.GetAllExercisesAsync();
             return View(model);
         }
 
@@ -99,6 +158,7 @@ namespace MuscleHouse.Controllers
 
             if (!ModelState.IsValid)
             {
+                ViewBag.Ejercicios = await _workoutService.GetAllExercisesAsync();
                 return View(model);
             }
 

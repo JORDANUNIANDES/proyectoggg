@@ -1,0 +1,101 @@
+@model MuscleHouse.ViewModels.CreateRutinaViewModel
+@{
+    ViewData["Title"] = "Crear Rutina - Entrenador";
+    var ejercicios = ViewBag.Ejercicios as IEnumerable<MuscleHouse.Models.Ejercicio> ?? new List<MuscleHouse.Models.Ejercicio>();
+}
+
+<div class="mb-4">
+    <h2><i class="bi bi-journal-plus me-2"></i>Crear Nueva Rutina de Entrenamiento</h2>
+</div>
+
+<form asp-action="CrearRutina" method="post">
+    <input type="hidden" asp-for="ClienteId" />
+
+    <div class="card card-dark p-4 mb-4">
+        <div class="mb-3">
+            <label asp-for="Nombre" class="form-label">Nombre de la Rutina (Ej: Fuerza Torso A / Hipertrofia Pierna)</label>
+            <input asp-for="Nombre" class="form-control form-control-dark" required placeholder="Nombre de la rutina..." />
+        </div>
+    </div>
+
+    <div class="card card-dark p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="text-warning mb-0"><i class="bi bi-card-list me-2"></i>Ejercicios de la Rutina</h5>
+            <button type="button" class="btn btn-sm btn-outline-warning" id="btnAddEjercicio">
+                <i class="bi bi-plus-circle me-1"></i>Agregar Ejercicio
+            </button>
+        </div>
+
+        <div id="ejerciciosContainer">
+            <div class="ejercicio-row card bg-dark border-secondary p-3 mb-3">
+                <div class="row g-2">
+                    <div class="col-md-4 mb-2">
+                        <label class="form-label">Ejercicio</label>
+                        <select name="Ejercicios[0].EjercicioId" class="form-select form-control-dark" required>
+                            <option value="">-- Seleccionar Ejercicio --</option>
+                            @foreach (var ej in ejercicios)
+                            {
+                                <option value="@ej.Id">@ej.Nombre (@ej.GrupoMuscular)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">Series</label>
+                        <input type="number" name="Ejercicios[0].Series" class="form-control form-control-dark" value="4" required />
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">Repeticiones</label>
+                        <input type="number" name="Ejercicios[0].Repeticiones" class="form-control form-control-dark" value="10" required />
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">Peso (kg)</label>
+                        <input type="number" step="0.5" name="Ejercicios[0].PesoRecomendado" class="form-control form-control-dark" value="20" />
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">Descanso (seg)</label>
+                        <input type="number" name="Ejercicios[0].DescansoSegundos" class="form-control form-control-dark" value="60" />
+                    </div>
+                    <div class="col-md-12 mt-2">
+                        <input type="text" name="Ejercicios[0].Observaciones" class="form-control form-control-dark" placeholder="Observaciones / Indicaciones especiales..." />
+                        <input type="hidden" name="Ejercicios[0].Orden" value="1" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a asp-action="ClienteDetalles" asp-route-id="@Model.ClienteId" class="btn btn-outline-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-muscle btn-lg">Guardar y Asignar Rutina</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        let exerciseIndex = 1;
+        document.getElementById('btnAddEjercicio').addEventListener('click', function () {
+            const container = document.getElementById('ejerciciosContainer');
+            const firstRow = container.querySelector('.ejercicio-row');
+            const newRow = firstRow.cloneNode(true);
+
+            // Update names for the new index
+            newRow.querySelectorAll('select, input').forEach(input => {
+                const name = input.getAttribute('name');
+                if (name) {
+                    input.setAttribute('name', name.replace(/\[\d+\]/, '[' + exerciseIndex + ']'));
+                }
+                if (input.type !== 'hidden' && input.tagName !== 'SELECT') {
+                    if (input.name.includes('Orden')) {
+                        input.value = exerciseIndex + 1;
+                    }
+                }
+            });
+
+            const hiddenOrden = newRow.querySelector('input[name*="Orden"]');
+            if (hiddenOrden) hiddenOrden.value = exerciseIndex + 1;
+
+            container.appendChild(newRow);
+            exerciseIndex++;
+        });
+    </script>
+}

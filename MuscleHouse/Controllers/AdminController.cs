@@ -162,7 +162,7 @@ namespace MuscleHouse.Controllers
                 if (validationError != null)
                 {
                     ModelState.AddModelError(string.Empty, validationError);
-                    await _userManager.DeleteAsync(user); // rollback user
+                    await _userManager.DeleteAsync(user);
                     return View();
                 }
 
@@ -430,6 +430,32 @@ namespace MuscleHouse.Controllers
 
             TempData["SuccessMessage"] = plan.Activo ? "Plan activado con éxito." : "Plan inactivado con éxito.";
             return RedirectToAction(nameof(Planes));
+        }
+
+        // ================= MEMBRESÍAS, PAGOS Y ASISTENCIAS =================
+        [HttpGet]
+        public async Task<IActionResult> Membresias()
+        {
+            var membresias = await _dbContext.Membresias
+                .Include(m => m.Cliente)
+                .Include(m => m.Plan)
+                .OrderByDescending(m => m.FechaInicio)
+                .ToListAsync();
+            return View(membresias);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Pagos()
+        {
+            var pagos = await _paymentService.GetAllPaymentsAsync();
+            return View(pagos);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Asistencias()
+        {
+            var asistencias = await _attendanceService.GetAllAttendanceAsync();
+            return View(asistencias);
         }
 
         // ================= EJERCICIOS =================

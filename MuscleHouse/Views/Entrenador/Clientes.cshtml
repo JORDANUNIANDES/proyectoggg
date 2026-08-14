@@ -1,0 +1,52 @@
+@model IEnumerable<MuscleHouse.Models.Cliente>
+@{
+    ViewData["Title"] = "Mis Clientes Asignados - Entrenador";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-people me-2"></i>Mis Clientes Asignados</h2>
+</div>
+
+<div class="card card-dark p-3">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Teléfono</th>
+                    <th>Objetivo Fitness</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td><strong>@c.Nombre @c.Apellido</strong></td>
+                        <td>@c.Telefono</td>
+                        <td><span class="badge bg-secondary">@c.Objetivo</span></td>
+                        <td>
+                            @if (c.Activo)
+                            {
+                                <span class="badge bg-success">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Inactivo</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="ClienteDetalles" asp-route-id="@c.Id" class="btn btn-sm btn-outline-warning me-1">
+                                <i class="bi bi-eye"></i> Ver Perfil & Rutinas
+                            </a>
+                            <a asp-action="CrearRutina" asp-route-clienteId="@c.Id" class="btn btn-sm btn-muscle">
+                                <i class="bi bi-plus-circle"></i> Asignar Rutina
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+@model IEnumerable<MuscleHouse.Models.Progreso>
+@{
+    ViewData["Title"] = "Progreso de Mis Clientes - Entrenador";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-speedometer2 me-2"></i>Historial de Progreso de Clientes</h2>
+</div>
+
+<div class="card card-dark p-3">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Peso (kg)</th>
+                    <th>Pecho (cm)</th>
+                    <th>Cintura (cm)</th>
+                    <th>Brazo (cm)</th>
+                    <th>Pierna (cm)</th>
+                    <th>Cadera (cm)</th>
+                    <th>Observaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>@p.Fecha.ToShortDateString()</td>
+                        <td><strong>@(p.Cliente != null ? $"{p.Cliente.Nombre} {p.Cliente.Apellido}" : $"Cliente #{p.ClienteId}")</strong></td>
+                        <td><strong class="text-warning">@p.Peso kg</strong></td>
+                        <td>@p.Pecho cm</td>
+                        <td>@p.Cintura cm</td>
+                        <td>@p.Brazo cm</td>
+                        <td>@p.Pierna cm</td>
+                        <td>@p.Cadera cm</td>
+                        <td><small class="text-muted">@p.Observaciones</small></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

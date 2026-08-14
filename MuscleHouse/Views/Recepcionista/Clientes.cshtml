@@ -1,0 +1,61 @@
+@model IEnumerable<MuscleHouse.Models.Cliente>
+@{
+    ViewData["Title"] = "Clientes - Recepción";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-people me-2"></i>Gestión de Clientes</h2>
+    <a asp-action="CrearCliente" class="btn btn-muscle">
+        <i class="bi bi-person-plus me-1"></i>Registrar Nuevo Cliente
+    </a>
+</div>
+
+<div class="card card-dark p-3">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Nombre Completo</th>
+                    <th>Teléfono</th>
+                    <th>Objetivo</th>
+                    <th>Entrenador Asignado</th>
+                    <th>Membresía Activa</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    var activeSub = c.Membresias?.FirstOrDefault(m => m.Estado == "Activa");
+                    <tr>
+                        <td><strong>@c.Nombre @c.Apellido</strong></td>
+                        <td>@c.Telefono</td>
+                        <td><span class="badge bg-secondary">@c.Objetivo</span></td>
+                        <td>@(c.Entrenador != null ? $"{c.Entrenador.Nombre} {c.Entrenador.Apellido}" : "Sin Entrenador")</td>
+                        <td>
+                            @if (activeSub != null)
+                            {
+                                <span class="badge bg-success">@activeSub.Plan?.Nombre (Vence: @activeSub.FechaVencimiento.ToShortDateString())</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Sin Membresía Activa</span>
+                            }
+                        </td>
+                        <td>
+                            <form asp-action="RegistrarAsistencia" method="post" class="d-inline">
+                                <input type="hidden" name="clienteId" value="@c.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-info me-1" title="Registrar Entrada">
+                                    <i class="bi bi-check-circle"></i> Asistencia
+                                </button>
+                            </form>
+                            <a asp-action="Membresias" class="btn btn-sm btn-outline-warning me-1" title="Renovar Membresía">
+                                <i class="bi bi-card-checklist"></i> Renovar
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
