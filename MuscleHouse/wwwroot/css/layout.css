@@ -1,26 +1,26 @@
 /* Layout Structures for MUSCLE HOUSE */
 
 .navbar-mh {
-    background-color: var(--mh-dark-card);
-    border-bottom: 2px solid var(--mh-orange);
+    background-color: var(--mh-black);
+    border-bottom: 2px solid var(--mh-red);
     padding: 0.8rem 1.5rem;
 }
 
 .navbar-brand-mh {
     font-weight: 800;
     font-size: 1.6rem;
-    color: var(--mh-orange) !important;
+    color: var(--mh-red) !important;
     letter-spacing: 1px;
 }
 
 .navbar-brand-mh span {
-    color: var(--mh-yellow);
+    color: var(--mh-white);
 }
 
 .footer-mh {
-    background-color: var(--mh-dark-card);
-    border-top: 1px solid var(--mh-dark-border);
-    color: var(--mh-text-gray);
+    background-color: var(--mh-black);
+    border-top: 1px solid var(--mh-border);
+    color: var(--mh-text-secondary);
     font-size: 0.9rem;
     padding: 1rem 0;
 }
@@ -33,13 +33,13 @@
 
 .sidebar-mh {
     width: 260px;
-    background-color: var(--mh-dark-card);
-    border-right: 1px solid var(--mh-dark-border);
+    background-color: var(--mh-black);
+    border-right: 1px solid var(--mh-border);
     transition: all 0.3s;
 }
 
 .sidebar-mh .nav-link {
-    color: var(--mh-text-light);
+    color: var(--mh-text-primary);
     padding: 0.8rem 1.5rem;
     display: flex;
     align-items: center;
@@ -48,16 +48,23 @@
     border-left: 3px solid transparent;
 }
 
-.sidebar-mh .nav-link:hover,
+.sidebar-mh .nav-link:hover {
+    color: var(--mh-red);
+    background-color: rgba(227, 28, 37, 0.05);
+    border-left: 3px solid var(--mh-red-hover);
+}
+
 .sidebar-mh .nav-link.active {
-    color: var(--mh-orange);
-    background-color: rgba(255, 106, 0, 0.05);
-    border-left: 3px solid var(--mh-orange);
+    color: var(--mh-red);
+    background-color: rgba(227, 28, 37, 0.08);
+    border-left: 3px solid var(--mh-red);
+    font-weight: 700;
 }
 
 .content-mh {
     flex: 1;
     padding: 2rem;
+    background-color: var(--mh-dark);
 }
 
 @media (max-width: 768px) {
@@ -67,6 +74,6 @@
     .sidebar-mh {
         width: 100%;
         border-right: none;
-        border-bottom: 1px solid var(--mh-dark-border);
+        border-bottom: 1px solid var(--mh-border);
     }
 }

@@ -5,7 +5,7 @@
 }
 
 <div class="mb-4">
-    <h2 class="fw-bold text-orange"><i class="bi bi-speedometer2"></i> Mi Dashboard — MUSCLE HOUSE</h2>
+    <h2 class="fw-bold text-red"><i class="bi bi-speedometer2"></i> Mi Dashboard — MUSCLE HOUSE</h2>
     <p class="text-gray">¡Bienvenido de vuelta, <strong>@Model.Cliente?.Nombre</strong>! Aquí tienes un análisis interactivo de tu evolución física en MUSCLE HOUSE.</p>
 </div>
 
@@ -14,14 +14,14 @@
     <div class="col-md-4">
         <div class="card card-mh p-4 text-center">
             <h6 class="text-gray small text-uppercase m-0">Estado de Membresía</h6>
-            <h3 class="fw-bold text-orange mt-2">@(Model.MembresiaActual?.Plan?.Nombre ?? "Ninguna")</h3>
-            <p class="text-gray small m-0 mt-1">Días restantes: <strong class="text-yellow">@Model.DiasRestantes</strong></p>
+            <h3 class="fw-bold text-red mt-2">@(Model.MembresiaActual?.Plan?.Nombre ?? "Ninguna")</h3>
+            <p class="text-gray small m-0 mt-1">Días restantes: <strong class="text-white">@Model.DiasRestantes</strong></p>
         </div>
     </div>
     <div class="col-md-4">
         <div class="card card-mh p-4 text-center">
             <h6 class="text-gray small text-uppercase m-0">Mi Entrenador Asignado</h6>
-            <h3 class="fw-bold text-yellow mt-2">@(Model.Entrenador != null ? $"{Model.Entrenador.Nombre} {Model.Entrenador.Apellido}" : "Sin Asignar")</h3>
+            <h3 class="fw-bold text-white mt-2">@(Model.Entrenador != null ? $"{Model.Entrenador.Nombre} {Model.Entrenador.Apellido}" : "Sin Asignar")</h3>
             <p class="text-gray small m-0 mt-1">@Model.Entrenador?.Especialidad</p>
         </div>
     </div>
@@ -38,7 +38,7 @@
 <div class="row g-4 mb-5">
     <div class="col-md-12">
         <div class="card card-mh">
-            <div class="card-mh-header text-orange"><i class="bi bi-graph-up"></i> Mi Evolución de Medidas Físicas y Peso</div>
+            <div class="card-mh-header text-red"><i class="bi bi-graph-up"></i> Mi Evolución de Medidas Físicas y Peso</div>
             <div class="card-body" style="height: 350px; display: flex; align-items: center; justify-content: center;">
                 @if (Model.HistorialProgreso.Any())
                 {
@@ -57,7 +57,7 @@
     <!-- Active Routine Details -->
     <div class="col-md-6">
         <div class="card card-mh h-100">
-            <div class="card-mh-header text-orange"><i class="bi bi-list-task"></i> Mi Rutina Activa</div>
+            <div class="card-mh-header text-red"><i class="bi bi-list-task"></i> Mi Rutina Activa</div>
             <div class="card-body p-0">
                 @if (Model.RutinaActiva != null && Model.RutinaActiva.RutinaEjercicios.Any())
                 {
@@ -78,7 +78,7 @@
                                         <td>@item.Ejercicio?.Nombre</td>
                                         <td>@item.Series</td>
                                         <td>@item.Repeticiones</td>
-                                        <td class="text-yellow">@item.PesoRecomendado.ToString("F1") kg</td>
+                                        <td class="text-red">@item.PesoRecomendado.ToString("F1") kg</td>
                                     </tr>
                                 }
                             </tbody>
@@ -98,7 +98,7 @@
     <!-- Self register progress form -->
     <div class="col-md-6">
         <div class="card card-mh h-100">
-            <div class="card-mh-header text-orange"><i class="bi bi-plus-circle"></i> Registrar Mis Medidas de Hoy</div>
+            <div class="card-mh-header text-red"><i class="bi bi-plus-circle"></i> Registrar Mis Medidas de Hoy</div>
             <div class="card-body">
                 <form asp-action="RegistrarProgresoPropio" method="post">
                     @Html.AntiForgeryToken()
@@ -106,35 +106,35 @@
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label text-orange small fw-bold">Peso actual (kg)</label>
+                            <label class="form-label text-red small fw-bold">Peso actual (kg)</label>
                             <input type="number" step="0.01" name="Peso" class="form-control form-control-mh" required />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label text-orange small fw-bold">Pecho (cm)</label>
+                            <label class="form-label text-red small fw-bold">Pecho (cm)</label>
                             <input type="number" step="0.1" name="Pecho" class="form-control form-control-mh" required />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label text-orange small fw-bold">Cintura (cm)</label>
+                            <label class="form-label text-red small fw-bold">Cintura (cm)</label>
                             <input type="number" step="0.1" name="Cintura" class="form-control form-control-mh" required />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label text-orange small fw-bold">Brazo (cm)</label>
+                            <label class="form-label text-red small fw-bold">Brazo (cm)</label>
                             <input type="number" step="0.1" name="Brazo" class="form-control form-control-mh" required />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label text-orange small fw-bold">Pierna (cm)</label>
+                            <label class="form-label text-red small fw-bold">Pierna (cm)</label>
                             <input type="number" step="0.1" name="Pierna" class="form-control form-control-mh" required />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label text-orange small fw-bold">Cadera (cm)</label>
+                            <label class="form-label text-red small fw-bold">Cadera (cm)</label>
                             <input type="number" step="0.1" name="Cadera" class="form-control form-control-mh" required />
                         </div>
                         <div class="col-12">
-                            <label class="form-label text-orange small fw-bold">Observaciones / Rendimiento</label>
+                            <label class="form-label text-red small fw-bold">Observaciones / Rendimiento</label>
                             <input type="text" name="Observaciones" class="form-control form-control-mh" placeholder="ej. Sintiendo más fuerza en empujes." />
                         </div>
                         <div class="col-12 mt-4 text-end">
-                            <button type="submit" class="btn btn-mh-orange px-4">
+                            <button type="submit" class="btn btn-mh-red px-4">
                                 <i class="bi bi-check-circle"></i> Guardar Medidas de Progreso
                             </button>
                         </div>
@@ -166,15 +166,15 @@
                             {
                                 label: 'Peso (kg)',
                                 data: @Html.Raw(Json.Serialize(weights)),
-                                borderColor: '#ff6a00',
-                                backgroundColor: 'rgba(255, 106, 0, 0.1)',
+                                borderColor: '#e31c25',
+                                backgroundColor: 'rgba(227, 28, 37, 0.1)',
                                 tension: 0.2,
                                 yAxisID: 'y'
                             },
                             {
                                 label: 'Brazo (cm)',
                                 data: @Html.Raw(Json.Serialize(arms)),
-                                borderColor: '#ffb700',
+                                borderColor: '#ffffff',
                                 backgroundColor: 'transparent',
                                 tension: 0.2,
                                 yAxisID: 'y1'
@@ -182,7 +182,7 @@
                             {
                                 label: 'Cintura (cm)',
                                 data: @Html.Raw(Json.Serialize(waists)),
-                                borderColor: '#f5f5f5',
+                                borderColor: '#cccccc',
                                 backgroundColor: 'transparent',
                                 tension: 0.2,
                                 yAxisID: 'y1'
@@ -194,28 +194,28 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: {
-                                labels: { color: '#f5f5f5' }
+                                labels: { color: '#ffffff' }
                             }
                         },
                         scales: {
                             x: {
-                                ticks: { color: '#b0b0b0' },
-                                grid: { color: '#2d2d2d' }
+                                ticks: { color: '#cccccc' },
+                                grid: { color: '#242424' }
                             },
                             y: {
                                 type: 'linear',
                                 display: true,
                                 position: 'left',
-                                title: { display: true, text: 'Cargas / Peso (kg)', color: '#ff6a00' },
-                                ticks: { color: '#b0b0b0' },
-                                grid: { color: '#2d2d2d' }
+                                title: { display: true, text: 'Cargas / Peso (kg)', color: '#e31c25' },
+                                ticks: { color: '#cccccc' },
+                                grid: { color: '#242424' }
                             },
                             y1: {
                                 type: 'linear',
                                 display: true,
                                 position: 'right',
-                                title: { display: true, text: 'Medidas (cm)', color: '#ffb700' },
-                                ticks: { color: '#b0b0b0' },
+                                title: { display: true, text: 'Medidas (cm)', color: '#ffffff' },
+                                ticks: { color: '#cccccc' },
                                 grid: { drawOnChartArea: false } // only want the grid lines for one axis
                             }
                         }

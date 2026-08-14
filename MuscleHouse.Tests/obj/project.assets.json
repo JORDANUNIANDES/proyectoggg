@@ -1276,6 +1276,7 @@
         "dependencies": {
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "10.0.0-rc",
           "Microsoft.AspNetCore.Identity.UI": "10.0.0-rc",
+          "Microsoft.EntityFrameworkCore.InMemory": "10.0.0-rc",
           "Microsoft.EntityFrameworkCore.SqlServer": "10.0.0-rc"
         },
         "compile": {
