@@ -5,12 +5,22 @@ using MuscleHouse.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure ApplicationDbContext to use exclusively SQL Server
+// Configure ApplicationDbContext to use exclusively SQL Server (with configuration/env-override for local sandbox execution)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? "Server=(localdb)\\MSSQLLocalDB;Database=GymManagementDB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+var useInMemory = Environment.GetEnvironmentVariable("USE_INMEMORY") == "true";
+
+if (useInMemory)
+{
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseInMemoryDatabase("GymManagementDB"));
+}
+else
+{
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(connectionString));
+}
 
 // Add ASP.NET Core Identity with standard security policy (suitable for production/development)
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

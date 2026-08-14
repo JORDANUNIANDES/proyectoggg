@@ -43,12 +43,21 @@ namespace MuscleHouse.Controllers
             var payments = await _paymentService.GetAllPaymentsAsync();
             var attendance = await _attendanceService.GetAllAttendanceAsync();
 
+            // Correct concept of Active Clients: Client is Active and has an Active, non-expired membership
+            var totalActiveClients = await _dbContext.Clientes
+                .CountAsync(c => c.Activo && c.Membresias.Any(m => m.Estado == "Activa" && m.FechaVencimiento >= DateTime.Today));
+
             var model = new RecepcionistaDashboardViewModel
             {
-                TotalClientesActivos = attendance.Select(a => a.ClienteId).Distinct().Count(),
+                TotalClientesActivos = totalActiveClients,
                 IngresosTotales = payments.Sum(p => p.Monto),
                 PagosRecientes = payments.Take(5).ToList(),
-                AsistenciasDeHoy = attendance.Where(a => a.FechaHora.Date == DateTime.Today).ToList()
+                AsistenciasDeHoy = attendance.Where(a => a.FechaHora.Date == DateTime.Today).ToList(),
+                MembresiasProximasAVencer = await _dbContext.Membresias
+                    .Include(m => m.Cliente)
+                    .Include(m => m.Plan)
+                    .Where(m => m.Estado == "Activa" && m.FechaVencimiento >= DateTime.Today && m.FechaVencimiento <= DateTime.Today.AddDays(7))
+                    .ToListAsync()
             };
 
             return View(model);
@@ -126,6 +135,18 @@ namespace MuscleHouse.Controllers
                 _dbContext.AsignacionesEntrenadores.Add(newAsg);
                 await _dbContext.SaveChangesAsync();
             }
+
+            // Also register standard notification for welcoming
+            var notif = new Notificacion
+            {
+                UserId = user.Id,
+                Titulo = "¡Bienvenido a MUSCLE HOUSE!",
+                Mensaje = "Tu cuenta ha sido creada con éxito. ¡Prepárate para dar el 100%!",
+                Fecha = DateTime.Now,
+                Leida = false
+            };
+            _dbContext.Notificaciones.Add(notif);
+            await _dbContext.SaveChangesAsync();
 
             TempData["SuccessMessage"] = $"¡Cliente {model.Nombre} {model.Apellido} registrado con éxito!";
             return RedirectToAction(nameof(Clientes));

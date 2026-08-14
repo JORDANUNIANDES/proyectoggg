@@ -59,6 +59,10 @@
               "target": "Package",
               "version": "[10.0.0-rc.*, )"
             },
+            "Microsoft.EntityFrameworkCore.InMemory": {
+              "target": "Package",
+              "version": "[10.0.0-rc.*, )"
+            },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[10.0.0-rc.*, )"
