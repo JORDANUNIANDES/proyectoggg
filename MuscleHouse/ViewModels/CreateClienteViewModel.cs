@@ -31,5 +31,7 @@ namespace MuscleHouse.ViewModels
         public string Objetivo { get; set; } = string.Empty;
 
         public int? EntrenadorId { get; set; }
+
+        public int? PlanId { get; set; }
     }
 }

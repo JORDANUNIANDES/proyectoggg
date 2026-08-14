@@ -68,6 +68,8 @@ namespace MuscleHouse.Controllers
             var clients = await _dbContext.Clientes
                 .Include(c => c.User)
                 .Include(c => c.Entrenador)
+                .Include(c => c.Membresias)
+                .ThenInclude(m => m.Plan)
                 .ToListAsync();
             return View(clients);
         }
@@ -76,6 +78,7 @@ namespace MuscleHouse.Controllers
         public async Task<IActionResult> CrearCliente()
         {
             ViewBag.Trainers = await _staffService.GetAllTrainersAsync();
+            ViewBag.Plans = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
             return View(new CreateClienteViewModel());
         }
 
@@ -86,6 +89,7 @@ namespace MuscleHouse.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.Trainers = await _staffService.GetAllTrainersAsync();
+                ViewBag.Plans = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
                 return View(model);
             }
 
@@ -98,6 +102,7 @@ namespace MuscleHouse.Controllers
                     ModelState.AddModelError(string.Empty, err.Description);
                 }
                 ViewBag.Trainers = await _staffService.GetAllTrainersAsync();
+                ViewBag.Plans = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
                 return View(model);
             }
 
@@ -131,6 +136,16 @@ namespace MuscleHouse.Controllers
                 await _dbContext.SaveChangesAsync();
             }
 
+            if (model.PlanId.HasValue)
+            {
+                var plan = await _dbContext.Planes.FindAsync(model.PlanId.Value);
+                if (plan != null)
+                {
+                    var newMemb = await _membershipService.RenewMembershipAsync(cliente.Id, plan.Id, plan.DuracionDias, plan.Precio);
+                    await _paymentService.RegisterPaymentAsync(cliente.Id, newMemb.Id, plan.Precio, "Efectivo");
+                }
+            }
+
             var notif = new Notificacion
             {
                 UserId = user.Id,
@@ -154,6 +169,7 @@ namespace MuscleHouse.Controllers
                 .Include(m => m.Plan)
                 .OrderByDescending(m => m.FechaInicio)
                 .ToListAsync();
+            ViewBag.Clients = await _dbContext.Clientes.Where(c => c.Activo).ToListAsync();
             ViewBag.Planes = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
             return View(membresias);
         }
