@@ -1,0 +1,67 @@
+﻿@model IEnumerable<MuscleHouse.Models.Plan>
+@{
+    ViewData["Title"] = "Gestión de Planes";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-red"><i class="bi bi-tag-fill"></i> Planes de Entrenamiento — MUSCLE HOUSE</h2>
+    <a asp-action="CrearPlan" class="btn btn-mh-red"><i class="bi bi-plus-circle"></i> Nuevo Plan</a>
+</div>
+
+<div class="card card-mh">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-mh w-100 m-0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Duración (Días)</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td><strong>@p.Nombre</strong></td>
+                            <td>@p.DuracionDias días</td>
+                            <td class="text-white fw-bold">$@p.Precio.ToString("F2")</td>
+                            <td>
+                                @if (p.Activo)
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Inactivo</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a asp-action="EditarPlan" asp-route-id="@p.Id" class="btn btn-sm btn-mh-secondary">
+                                        <i class="bi bi-pencil-square text-yellow"></i> Editar
+                                    </a>
+                                    <form asp-action="InactivarPlan" asp-route-id="@p.Id" method="post" onsubmit="return confirm('¿Está seguro de cambiar el estado de este plan?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-mh-secondary">
+                                            @if (p.Activo)
+                                            {
+                                                <i class="bi bi-toggle-on text-red"></i> <span class="text-red">Inactivar</span>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-toggle-off text-white-secondary"></i> <span>Activar</span>
+                                            }
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

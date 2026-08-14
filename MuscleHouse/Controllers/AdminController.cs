@@ -78,6 +78,49 @@ namespace MuscleHouse.Controllers
             return View(clients);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditarCliente(int id)
+        {
+            var cliente = await _dbContext.Clientes.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
+            if (cliente == null) return NotFound();
+
+            ViewBag.Trainers = await _staffService.GetAllTrainersAsync();
+            return View(cliente);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarCliente(Cliente model)
+        {
+            var cliente = await _dbContext.Clientes.FindAsync(model.Id);
+            if (cliente == null) return NotFound();
+
+            cliente.Nombre = model.Nombre;
+            cliente.Apellido = model.Apellido;
+            cliente.Telefono = model.Telefono;
+            cliente.FechaNacimiento = model.FechaNacimiento;
+            cliente.Objetivo = model.Objetivo;
+            cliente.EntrenadorId = model.EntrenadorId;
+
+            await _dbContext.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Cliente editado con éxito.";
+            return RedirectToAction(nameof(Clientes));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InactivarCliente(int id)
+        {
+            var cliente = await _dbContext.Clientes.FindAsync(id);
+            if (cliente == null) return NotFound();
+
+            cliente.Activo = !cliente.Activo;
+            await _dbContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = cliente.Activo ? "Cliente activado con éxito." : "Cliente inactivado con éxito.";
+            return RedirectToAction(nameof(Clientes));
+        }
+
         // ================= ENTRENADORES =================
         [HttpGet]
         public async Task<IActionResult> Entrenadores()
@@ -142,6 +185,57 @@ namespace MuscleHouse.Controllers
             await _dbContext.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "¡Entrenador creado con éxito!";
+            return RedirectToAction(nameof(Entrenadores));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditarEntrenador(int id)
+        {
+            var trainer = await _dbContext.Entrenadores.FindAsync(id);
+            if (trainer == null) return NotFound();
+            return View(trainer);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarEntrenador(Entrenador model, IFormFile? nuevaFotografia)
+        {
+            var trainer = await _dbContext.Entrenadores.FindAsync(model.Id);
+            if (trainer == null) return NotFound();
+
+            trainer.Nombre = model.Nombre;
+            trainer.Apellido = model.Apellido;
+            trainer.Especialidad = model.Especialidad;
+            trainer.Experiencia = model.Experiencia;
+            trainer.Descripcion = model.Descripcion;
+
+            if (nuevaFotografia != null && nuevaFotografia.Length > 0)
+            {
+                var validationError = ValidateImage(nuevaFotografia);
+                if (validationError != null)
+                {
+                    ModelState.AddModelError(string.Empty, validationError);
+                    return View(model);
+                }
+                trainer.Fotografia = await SaveImageAsync(nuevaFotografia);
+            }
+
+            await _dbContext.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Entrenador editado con éxito.";
+            return RedirectToAction(nameof(Entrenadores));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InactivarEntrenador(int id)
+        {
+            var trainer = await _dbContext.Entrenadores.FindAsync(id);
+            if (trainer == null) return NotFound();
+
+            trainer.Activo = !trainer.Activo;
+            await _dbContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = trainer.Activo ? "Entrenador activado con éxito." : "Entrenador inactivado con éxito.";
             return RedirectToAction(nameof(Entrenadores));
         }
 
@@ -211,6 +305,56 @@ namespace MuscleHouse.Controllers
             return RedirectToAction(nameof(Recepcionistas));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditarRecepcionista(int id)
+        {
+            var recep = await _dbContext.Recepcionistas.FindAsync(id);
+            if (recep == null) return NotFound();
+            return View(recep);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarRecepcionista(Recepcionista model, IFormFile? nuevaFotografia)
+        {
+            var recep = await _dbContext.Recepcionistas.FindAsync(model.Id);
+            if (recep == null) return NotFound();
+
+            recep.Nombre = model.Nombre;
+            recep.Apellido = model.Apellido;
+            recep.HorarioAtencion = model.HorarioAtencion;
+            recep.Descripcion = model.Descripcion;
+
+            if (nuevaFotografia != null && nuevaFotografia.Length > 0)
+            {
+                var validationError = ValidateImage(nuevaFotografia);
+                if (validationError != null)
+                {
+                    ModelState.AddModelError(string.Empty, validationError);
+                    return View(model);
+                }
+                recep.Fotografia = await SaveImageAsync(nuevaFotografia);
+            }
+
+            await _dbContext.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Recepcionista editado con éxito.";
+            return RedirectToAction(nameof(Recepcionistas));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InactivarRecepcionista(int id)
+        {
+            var recep = await _dbContext.Recepcionistas.FindAsync(id);
+            if (recep == null) return NotFound();
+
+            recep.Activo = !recep.Activo;
+            await _dbContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = recep.Activo ? "Recepcionista activado con éxito." : "Recepcionista inactivado con éxito.";
+            return RedirectToAction(nameof(Recepcionistas));
+        }
+
         // ================= PLANES =================
         [HttpGet]
         public async Task<IActionResult> Planes()
@@ -247,6 +391,115 @@ namespace MuscleHouse.Controllers
             return RedirectToAction(nameof(Planes));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditarPlan(int id)
+        {
+            var plan = await _dbContext.Planes.FindAsync(id);
+            if (plan == null) return NotFound();
+            return View(plan);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarPlan(Plan model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var plan = await _dbContext.Planes.FindAsync(model.Id);
+            if (plan == null) return NotFound();
+
+            plan.Nombre = model.Nombre;
+            plan.DuracionDias = model.DuracionDias;
+            plan.Precio = model.Precio;
+            plan.Descripcion = model.Descripcion;
+
+            await _dbContext.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Plan editado con éxito.";
+            return RedirectToAction(nameof(Planes));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InactivarPlan(int id)
+        {
+            var plan = await _dbContext.Planes.FindAsync(id);
+            if (plan == null) return NotFound();
+
+            plan.Activo = !plan.Activo;
+            await _dbContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = plan.Activo ? "Plan activado con éxito." : "Plan inactivado con éxito.";
+            return RedirectToAction(nameof(Planes));
+        }
+
+        // ================= EJERCICIOS =================
+        [HttpGet]
+        public async Task<IActionResult> Ejercicios()
+        {
+            var ejercicios = await _dbContext.Ejercicios.ToListAsync();
+            return View(ejercicios);
+        }
+
+        [HttpGet]
+        public IActionResult CrearEjercicio()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CrearEjercicio(Ejercicio model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            _dbContext.Ejercicios.Add(model);
+            await _dbContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Ejercicio creado con éxito.";
+            return RedirectToAction(nameof(Ejercicios));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditarEjercicio(int id)
+        {
+            var ej = await _dbContext.Ejercicios.FindAsync(id);
+            if (ej == null) return NotFound();
+            return View(ej);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarEjercicio(Ejercicio model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var ej = await _dbContext.Ejercicios.FindAsync(model.Id);
+            if (ej == null) return NotFound();
+
+            ej.Nombre = model.Nombre;
+            ej.GrupoMuscular = model.GrupoMuscular;
+            ej.Descripcion = model.Descripcion;
+            ej.Instrucciones = model.Instrucciones;
+
+            await _dbContext.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Ejercicio editado con éxito.";
+            return RedirectToAction(nameof(Ejercicios));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InactivarEjercicio(int id)
+        {
+            var ej = await _dbContext.Ejercicios.FindAsync(id);
+            if (ej == null) return NotFound();
+
+            ej.Activo = !ej.Activo;
+            await _dbContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = ej.Activo ? "Ejercicio activado con éxito." : "Ejercicio inactivado con éxito.";
+            return RedirectToAction(nameof(Ejercicios));
+        }
+
         // ================= HELPER METHODS FOR IMAGES =================
         private string? ValidateImage(IFormFile file)
         {
@@ -258,14 +511,12 @@ namespace MuscleHouse.Controllers
                 return "La extensión de la imagen no está permitida. Use JPG, JPEG, PNG o WebP.";
             }
 
-            // Check mime type safely
             var allowedMimeTypes = new[] { "image/jpeg", "image/png", "image/webp" };
             if (!allowedMimeTypes.Contains(file.ContentType.ToLower()))
             {
                 return "El tipo MIME del archivo no está permitido.";
             }
 
-            // Max size: 2 MB
             if (file.Length > 2 * 1024 * 1024)
             {
                 return "La imagen excede el límite de tamaño permitido de 2 MB.";

@@ -9,6 +9,7 @@ namespace MuscleHouse.Models
         public string Descripcion { get; set; } = string.Empty;
         public string GrupoMuscular { get; set; } = string.Empty;
         public string Instrucciones { get; set; } = string.Empty;
+        public bool Activo { get; set; } = true;
 
         // Navigation properties
         public ICollection<RutinaEjercicio> RutinasEjercicios { get; set; } = new List<RutinaEjercicio>();

@@ -1,0 +1,67 @@
+﻿@model IEnumerable<MuscleHouse.Models.Ejercicio>
+@{
+    ViewData["Title"] = "Gestión de Ejercicios";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-red"><i class="bi bi-activity"></i> Ejercicios — MUSCLE HOUSE</h2>
+    <a asp-action="CrearEjercicio" class="btn btn-mh-red"><i class="bi bi-plus-circle"></i> Nuevo Ejercicio</a>
+</div>
+
+<div class="card card-mh">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-mh w-100 m-0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Grupo Muscular</th>
+                        <th>Descripción</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in Model)
+                    {
+                        <tr>
+                            <td><strong>@e.Nombre</strong></td>
+                            <td class="text-white-secondary">@e.GrupoMuscular</td>
+                            <td class="text-gray small">@e.Descripcion</td>
+                            <td>
+                                @if (e.Activo)
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Inactivo</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a asp-action="EditarEjercicio" asp-route-id="@e.Id" class="btn btn-sm btn-mh-secondary">
+                                        <i class="bi bi-pencil-square text-yellow"></i> Editar
+                                    </a>
+                                    <form asp-action="InactivarEjercicio" asp-route-id="@e.Id" method="post" onsubmit="return confirm('¿Está seguro de cambiar el estado de este ejercicio?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-mh-secondary">
+                                            @if (e.Activo)
+                                            {
+                                                <i class="bi bi-toggle-on text-red"></i> <span class="text-red">Inactivar</span>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-toggle-off text-white-secondary"></i> <span>Activar</span>
+                                            }
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

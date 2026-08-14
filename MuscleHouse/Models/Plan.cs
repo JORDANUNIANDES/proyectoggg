@@ -9,6 +9,7 @@ namespace MuscleHouse.Models
         public int DuracionDias { get; set; }
         public decimal Precio { get; set; }
         public string Descripcion { get; set; } = string.Empty;
+        public bool Activo { get; set; } = true;
 
         // Navigation properties
         public ICollection<Membresia> Membresias { get; set; } = new List<Membresia>();

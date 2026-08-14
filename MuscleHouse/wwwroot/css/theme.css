@@ -36,6 +36,10 @@ a:hover {
     color: var(--mh-text-secondary) !important;
 }
 
+.text-gray, .text-muted, .text-gray-secondary {
+    color: var(--mh-text-secondary) !important;
+}
+
 .bg-orange, .bg-red {
     background-color: var(--mh-red) !important;
 }
@@ -46,4 +50,31 @@ a:hover {
 
 .bg-dark-card {
     background-color: var(--mh-dark-surface) !important;
+}
+
+/* Base custom classes to prevent bootstrap or browser default override issues */
+input, select, textarea {
+    color: var(--mh-text-primary) !important;
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--mh-text-secondary) !important;
+    opacity: 1 !important;
+}
+
+.badge {
+    color: var(--mh-text-primary) !important;
+}
+
+.badge-success, .bg-success {
+    background-color: #2ea44f !important;
+}
+
+.badge-danger, .bg-danger {
+    background-color: var(--mh-red) !important;
+}
+
+.badge-warning, .bg-warning {
+    background-color: #f2a104 !important;
+    color: var(--mh-black) !important;
 }
