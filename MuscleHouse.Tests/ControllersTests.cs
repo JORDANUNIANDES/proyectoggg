@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using MuscleHouse.Controllers;
+using MuscleHouse.Data;
 using MuscleHouse.Models;
 using MuscleHouse.Services;
 using MuscleHouse.ViewModels;
@@ -56,13 +57,13 @@ namespace MuscleHouse.Tests
 
             // Assert
             var jsonResult = Assert.IsType<JsonResult>(result);
-            dynamic? data = jsonResult.Value;
-            Assert.NotNull(data);
+            object? dataObj = jsonResult.Value;
+            Assert.NotNull(dataObj);
 
-            // Extract property from anonymous type using reflection
-            var replyProp = data.GetType().GetProperty("reply");
+            // Extract property from anonymous type using reflection safely
+            var replyProp = dataObj.GetType().GetProperty("reply");
             Assert.NotNull(replyProp);
-            var replyValue = replyProp.GetValue(data, null);
+            var replyValue = replyProp.GetValue(dataObj, null);
             Assert.Equal("Respuesta de IA de prueba", replyValue);
         }
 
@@ -96,11 +97,16 @@ namespace MuscleHouse.Tests
             var mockSecurity = new Mock<ISecurityService>();
             var mockUserMgr = GetMockUserManager();
 
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+            using var dbContext = new ApplicationDbContext(options);
+
             mockUserMgr.Setup(m => m.GetUserId(It.IsAny<ClaimsPrincipal>())).Returns("trainer-id-99");
             mockSecurity.Setup(s => s.CanTrainerAccessAsync("trainer-id-99", 5)).ReturnsAsync(false); // No access
 
             var controller = new EntrenadorController(
-                mockStaff.Object, mockWorkout.Object, mockProgress.Object, mockSecurity.Object, mockUserMgr.Object);
+                mockStaff.Object, mockWorkout.Object, mockProgress.Object, mockSecurity.Object, mockUserMgr.Object, dbContext);
 
             var model = new CreateRutinaViewModel { ClienteId = 5, Nombre = "Rutina Ilegal" };
 
