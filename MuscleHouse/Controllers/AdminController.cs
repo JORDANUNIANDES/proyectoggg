@@ -132,51 +132,50 @@ namespace MuscleHouse.Controllers
         [HttpGet]
         public IActionResult CrearEntrenador()
         {
-            return View();
+            return View(new CreateEntrenadorViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CrearEntrenador(string email, string password, string nombre, string apellido, string especialidad, int experiencia, string descripcion, IFormFile? fotografia)
+        public async Task<IActionResult> CrearEntrenador(CreateEntrenadorViewModel model, IFormFile? fotoFile)
         {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "Correo y contraseña son obligatorios.");
-                return View();
+                return View(model);
             }
 
-            var user = new ApplicationUser { UserName = email, Email = email, EmailConfirmed = true };
-            var result = await _userManager.CreateAsync(user, password);
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email, EmailConfirmed = true };
+            var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
                 foreach (var err in result.Errors) ModelState.AddModelError(string.Empty, err.Description);
-                return View();
+                return View(model);
             }
 
             await _userManager.AddToRoleAsync(user, "Entrenador");
 
             string relativePath = "uploads/default-avatar.png";
-            if (fotografia != null && fotografia.Length > 0)
+            if (fotoFile != null && fotoFile.Length > 0)
             {
-                var validationError = ValidateImage(fotografia);
+                var validationError = ValidateImage(fotoFile);
                 if (validationError != null)
                 {
                     ModelState.AddModelError(string.Empty, validationError);
                     await _userManager.DeleteAsync(user);
-                    return View();
+                    return View(model);
                 }
 
-                relativePath = await SaveImageAsync(fotografia);
+                relativePath = await SaveImageAsync(fotoFile);
             }
 
             var trainer = new Entrenador
             {
                 UserId = user.Id,
-                Nombre = nombre,
-                Apellido = apellido,
-                Especialidad = especialidad,
-                Experiencia = experiencia,
-                Descripcion = descripcion,
+                Nombre = model.Nombre,
+                Apellido = model.Apellido,
+                Especialidad = model.Especialidad ?? "General",
+                Experiencia = model.Experiencia,
+                Descripcion = model.Descripcion ?? string.Empty,
                 Fotografia = relativePath,
                 Activo = true
             };
@@ -198,7 +197,7 @@ namespace MuscleHouse.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditarEntrenador(Entrenador model, IFormFile? nuevaFotografia)
+        public async Task<IActionResult> EditarEntrenador(Entrenador model, IFormFile? fotoFile)
         {
             var trainer = await _dbContext.Entrenadores.FindAsync(model.Id);
             if (trainer == null) return NotFound();
@@ -209,15 +208,15 @@ namespace MuscleHouse.Controllers
             trainer.Experiencia = model.Experiencia;
             trainer.Descripcion = model.Descripcion;
 
-            if (nuevaFotografia != null && nuevaFotografia.Length > 0)
+            if (fotoFile != null && fotoFile.Length > 0)
             {
-                var validationError = ValidateImage(nuevaFotografia);
+                var validationError = ValidateImage(fotoFile);
                 if (validationError != null)
                 {
                     ModelState.AddModelError(string.Empty, validationError);
                     return View(model);
                 }
-                trainer.Fotografia = await SaveImageAsync(nuevaFotografia);
+                trainer.Fotografia = await SaveImageAsync(fotoFile);
             }
 
             await _dbContext.SaveChangesAsync();
@@ -250,50 +249,49 @@ namespace MuscleHouse.Controllers
         [HttpGet]
         public IActionResult CrearRecepcionista()
         {
-            return View();
+            return View(new CreateRecepcionistaViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CrearRecepcionista(string email, string password, string nombre, string apellido, string descripcion, string horarioAtencion, IFormFile? fotografia)
+        public async Task<IActionResult> CrearRecepcionista(CreateRecepcionistaViewModel model, IFormFile? fotoFile)
         {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "Correo y contraseña son obligatorios.");
-                return View();
+                return View(model);
             }
 
-            var user = new ApplicationUser { UserName = email, Email = email, EmailConfirmed = true };
-            var result = await _userManager.CreateAsync(user, password);
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email, EmailConfirmed = true };
+            var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
                 foreach (var err in result.Errors) ModelState.AddModelError(string.Empty, err.Description);
-                return View();
+                return View(model);
             }
 
             await _userManager.AddToRoleAsync(user, "Recepcionista");
 
             string relativePath = "uploads/default-avatar.png";
-            if (fotografia != null && fotografia.Length > 0)
+            if (fotoFile != null && fotoFile.Length > 0)
             {
-                var validationError = ValidateImage(fotografia);
+                var validationError = ValidateImage(fotoFile);
                 if (validationError != null)
                 {
                     ModelState.AddModelError(string.Empty, validationError);
                     await _userManager.DeleteAsync(user);
-                    return View();
+                    return View(model);
                 }
 
-                relativePath = await SaveImageAsync(fotografia);
+                relativePath = await SaveImageAsync(fotoFile);
             }
 
             var recep = new Recepcionista
             {
                 UserId = user.Id,
-                Nombre = nombre,
-                Apellido = apellido,
-                Descripcion = descripcion,
-                HorarioAtencion = horarioAtencion,
+                Nombre = model.Nombre,
+                Apellido = model.Apellido,
+                Descripcion = model.Descripcion ?? string.Empty,
+                HorarioAtencion = model.HorarioAtencion ?? "Turno Regular",
                 Fotografia = relativePath,
                 Activo = true
             };
@@ -315,7 +313,7 @@ namespace MuscleHouse.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditarRecepcionista(Recepcionista model, IFormFile? nuevaFotografia)
+        public async Task<IActionResult> EditarRecepcionista(Recepcionista model, IFormFile? fotoFile)
         {
             var recep = await _dbContext.Recepcionistas.FindAsync(model.Id);
             if (recep == null) return NotFound();
@@ -325,15 +323,15 @@ namespace MuscleHouse.Controllers
             recep.HorarioAtencion = model.HorarioAtencion;
             recep.Descripcion = model.Descripcion;
 
-            if (nuevaFotografia != null && nuevaFotografia.Length > 0)
+            if (fotoFile != null && fotoFile.Length > 0)
             {
-                var validationError = ValidateImage(nuevaFotografia);
+                var validationError = ValidateImage(fotoFile);
                 if (validationError != null)
                 {
                     ModelState.AddModelError(string.Empty, validationError);
                     return View(model);
                 }
-                recep.Fotografia = await SaveImageAsync(nuevaFotografia);
+                recep.Fotografia = await SaveImageAsync(fotoFile);
             }
 
             await _dbContext.SaveChangesAsync();
