@@ -170,6 +170,29 @@ namespace MuscleHouse.Controllers
             return RedirectToAction(nameof(Dashboard));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegistrarMiProgreso(decimal peso, decimal pecho, decimal cintura, decimal brazo, decimal pierna, decimal cadera, string? observaciones)
+        {
+            var cliente = await GetCurrentClienteAsync();
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            if (peso <= 0)
+            {
+                TempData["ErrorMessage"] = "El peso debe ser mayor a cero.";
+                return RedirectToAction(nameof(Progreso));
+            }
+
+            await _progressService.RegisterProgressAsync(
+                cliente.Id, peso, pecho, cintura, brazo, pierna, cadera, observaciones ?? string.Empty);
+
+            TempData["SuccessMessage"] = "¡Tu progreso ha sido registrado con éxito!";
+            return RedirectToAction(nameof(Progreso));
+        }
+
         [HttpGet]
         public async Task<IActionResult> Notificaciones()
         {
