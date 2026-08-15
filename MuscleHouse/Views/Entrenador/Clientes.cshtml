@@ -1,10 +1,59 @@
 @model IEnumerable<MuscleHouse.Models.Cliente>
 @{
     ViewData["Title"] = "Mis Clientes Asignados - Entrenador";
+    string search = ViewBag.Search as string ?? "";
+    string estado = ViewBag.Estado as string ?? "";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalItems = ViewBag.TotalItems ?? 0;
+    int pageSize = ViewBag.PageSize ?? 10;
+    int startItem = totalItems == 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+    int endItem = Math.Min(currentPage * pageSize, totalItems);
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2><i class="bi bi-people me-2"></i>Mis Clientes Asignados</h2>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="card card-dark p-3 mb-4">
+    <form method="get" asp-action="Clientes" class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="search" value="@search" class="form-control form-control-dark" placeholder="Buscar por nombre, correo, teléfono, objetivo..." />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select name="estado" class="form-select form-control-dark">
+                <option value="">-- Todos los Estados --</option>
+                @if (estado == "Activo")
+                {
+                    <option value="Activo" selected="selected">Activo</option>
+                }
+                else
+                {
+                    <option value="Activo">Activo</option>
+                }
+                @if (estado == "Inactivo")
+                {
+                    <option value="Inactivo" selected="selected">Inactivo</option>
+                }
+                else
+                {
+                    <option value="Inactivo">Inactivo</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-muscle flex-grow-1">
+                <i class="bi bi-search me-1"></i>Buscar
+            </button>
+            <a asp-action="Clientes" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Limpiar
+            </a>
+        </div>
+    </form>
 </div>
 
 <div class="card card-dark p-3">
@@ -20,33 +69,66 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var c in Model)
+                @if (!Model.Any())
                 {
                     <tr>
-                        <td><strong>@c.Nombre @c.Apellido</strong></td>
-                        <td>@c.Telefono</td>
-                        <td><span class="badge bg-secondary">@c.Objetivo</span></td>
-                        <td>
-                            @if (c.Activo)
-                            {
-                                <span class="badge bg-success">Activo</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-danger">Inactivo</span>
-                            }
-                        </td>
-                        <td>
-                            <a asp-action="ClienteDetalles" asp-route-id="@c.Id" class="btn btn-sm btn-outline-warning me-1">
-                                <i class="bi bi-eye"></i> Ver Perfil & Rutinas
-                            </a>
-                            <a asp-action="CrearRutina" asp-route-clienteId="@c.Id" class="btn btn-sm btn-muscle">
-                                <i class="bi bi-plus-circle"></i> Asignar Rutina
-                            </a>
-                        </td>
+                        <td colspan="5" class="text-center py-4 text-muted">No se encontraron clientes asignados que coincidan con la búsqueda.</td>
                     </tr>
+                }
+                else
+                {
+                    @foreach (var c in Model)
+                    {
+                        <tr>
+                            <td><strong>@c.Nombre @c.Apellido</strong></td>
+                            <td>@c.Telefono</td>
+                            <td><span class="badge bg-secondary">@c.Objetivo</span></td>
+                            <td>
+                                @if (c.Activo)
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Inactivo</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="ClienteDetalles" asp-route-id="@c.Id" class="btn btn-sm btn-outline-warning me-1">
+                                    <i class="bi bi-eye"></i> Ver Perfil & Rutinas
+                                </a>
+                                <a asp-action="CrearRutina" asp-route-clienteId="@c.Id" class="btn btn-sm btn-muscle">
+                                    <i class="bi bi-plus-circle"></i> Asignar Rutina
+                                </a>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination Controls -->
+    @if (totalPages > 1)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+            <small class="text-muted">Mostrando @startItem-@endItem de @totalItems registros</small>
+            <nav aria-label="Navegación de páginas">
+                <ul class="pagination pagination-sm m-0">
+                    <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link bg-dark text-light border-secondary" asp-action="Clientes" asp-route-search="@search" asp-route-estado="@estado" asp-route-page="@(currentPage - 1)">Anterior</a>
+                    </li>
+                    @for (int p = 1; p <= totalPages; p++)
+                    {
+                        <li class="page-item @(p == currentPage ? "active" : "")">
+                            <a class="page-link @(p == currentPage ? "bg-danger border-danger text-white" : "bg-dark text-light border-secondary")" asp-action="Clientes" asp-route-search="@search" asp-route-estado="@estado" asp-route-page="@p">@p</a>
+                        </li>
+                    }
+                    <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                        <a class="page-link bg-dark text-light border-secondary" asp-action="Clientes" asp-route-search="@search" asp-route-estado="@estado" asp-route-page="@(currentPage + 1)">Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
 </div>

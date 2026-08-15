@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -37,6 +38,89 @@ namespace MuscleHouse.Tests
                 null!, null!, null!, null!);
 
             return signInManagerMock;
+        }
+
+        [Fact]
+        public async Task AdminController_Clientes_SearchAndPagination_ReturnsFilteredClients()
+        {
+            // Arrange
+            var mockStaff = new Mock<IStaffService>();
+            var mockMembership = new Mock<IMembershipService>();
+            var mockPayment = new Mock<IPaymentService>();
+            var mockAttendance = new Mock<IAttendanceService>();
+            var userMgrMock = GetMockUserManager();
+
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+            using var dbContext = new ApplicationDbContext(options);
+
+            var u1 = new ApplicationUser { Id = "u1", Email = "carlos@test.com" };
+            var u2 = new ApplicationUser { Id = "u2", Email = "maria@test.com" };
+            dbContext.Users.AddRange(u1, u2);
+
+            var c1 = new Cliente { Id = 1, UserId = "u1", Nombre = "Carlos", Apellido = "Lopez", Telefono = "7777-1111", Objetivo = "Fuerza", Activo = true };
+            var c2 = new Cliente { Id = 2, UserId = "u2", Nombre = "Maria", Apellido = "Garcia", Telefono = "7777-2222", Objetivo = "Cardio", Activo = true };
+            dbContext.Clientes.AddRange(c1, c2);
+            await dbContext.SaveChangesAsync();
+
+            var controller = new AdminController(mockStaff.Object, mockMembership.Object, mockPayment.Object, mockAttendance.Object, dbContext, userMgrMock.Object);
+
+            // Act
+            var result = await controller.Clientes("Carlos", "Activo", page: 1);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<IEnumerable<Cliente>>(viewResult.Model);
+            var list = model.ToList();
+
+            Assert.Single(list);
+            Assert.Equal("Carlos", list[0].Nombre);
+            Assert.Equal(1, controller.ViewBag.TotalItems);
+        }
+
+        [Fact]
+        public async Task EntrenadorController_Clientes_RestrictedToAssignedTrainerClientsOnly()
+        {
+            // Arrange
+            var mockStaff = new Mock<IStaffService>();
+            var mockWorkout = new Mock<IWorkoutService>();
+            var mockProgress = new Mock<IProgressService>();
+            var mockSecurity = new Mock<ISecurityService>();
+            var userMgrMock = GetMockUserManager();
+
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+            using var dbContext = new ApplicationDbContext(options);
+
+            var trainerUser = new ApplicationUser { Id = "t-user-1", Email = "trainer1@test.com" };
+            var trainer = new Entrenador { Id = 10, UserId = "t-user-1", Nombre = "Coach", Apellido = "Alex", Especialidad = "Crossfit", Activo = true };
+
+            var cAssigned = new Cliente { Id = 100, UserId = "u-assigned", Nombre = "Cliente", Apellido = "Asignado", Telefono = "1111", EntrenadorId = 10, Activo = true };
+            var cOther = new Cliente { Id = 101, UserId = "u-other", Nombre = "Cliente", Apellido = "Ajenos", Telefono = "2222", EntrenadorId = 20, Activo = true };
+
+            dbContext.Users.Add(trainerUser);
+            dbContext.Entrenadores.Add(trainer);
+            dbContext.Clientes.AddRange(cAssigned, cOther);
+            await dbContext.SaveChangesAsync();
+
+            userMgrMock.Setup(m => m.GetUserId(It.IsAny<ClaimsPrincipal>())).Returns("t-user-1");
+            mockStaff.Setup(s => s.GetTrainerByUserIdAsync("t-user-1")).ReturnsAsync(trainer);
+
+            var controller = new EntrenadorController(mockStaff.Object, mockWorkout.Object, mockProgress.Object, mockSecurity.Object, userMgrMock.Object, dbContext);
+
+            // Act
+            var result = await controller.Clientes(search: "Cliente", estado: "Activo", page: 1);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<IEnumerable<Cliente>>(viewResult.Model);
+            var list = model.ToList();
+
+            Assert.Single(list);
+            Assert.Equal(100, list[0].Id);
+            Assert.Equal("Asignado", list[0].Apellido);
         }
 
         [Fact]

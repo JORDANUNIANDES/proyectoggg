@@ -65,10 +65,50 @@ namespace MuscleHouse.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Clientes()
+        public async Task<IActionResult> Clientes(string? search, string? estado, int page = 1)
         {
             var trainerUserId = GetUserId();
-            var clients = await _staffService.GetAssignedClientsAsync(trainerUserId);
+            var trainer = await _staffService.GetTrainerByUserIdAsync(trainerUserId);
+            if (trainer == null) return NotFound("Entrenador no encontrado.");
+
+            var query = _dbContext.Clientes
+                .Include(c => c.User)
+                .Include(c => c.Membresias)
+                .ThenInclude(m => m.Plan)
+                .Where(c => c.EntrenadorId == trainer.Id)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim().ToLower();
+                query = query.Where(c => c.Nombre.ToLower().Contains(term) ||
+                                         c.Apellido.ToLower().Contains(term) ||
+                                         (c.Nombre + " " + c.Apellido).ToLower().Contains(term) ||
+                                         c.Telefono.Contains(term) ||
+                                         c.Objetivo.ToLower().Contains(term) ||
+                                         (c.User != null && c.User.Email != null && c.User.Email.ToLower().Contains(term)));
+            }
+
+            if (estado == "Activo") query = query.Where(c => c.Activo);
+            else if (estado == "Inactivo") query = query.Where(c => !c.Activo);
+
+            int totalItems = await query.CountAsync();
+            int pageSize = 10;
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            page = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
+
+            var clients = await query.OrderBy(c => c.Nombre).ThenBy(c => c.Apellido)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.Search = search;
+            ViewBag.Estado = estado;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.PageSize = pageSize;
+
             return View(clients);
         }
 

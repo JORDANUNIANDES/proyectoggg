@@ -1,10 +1,47 @@
 @model IEnumerable<MuscleHouse.Models.Pago>
 @{
     ViewData["Title"] = "Consulta de Pagos - Admin";
+    string search = ViewBag.Search as string ?? "";
+    string metodo = ViewBag.Metodo as string ?? "";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalItems = ViewBag.TotalItems ?? 0;
+    int pageSize = ViewBag.PageSize ?? 10;
+    int startItem = totalItems == 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+    int endItem = Math.Min(currentPage * pageSize, totalItems);
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2><i class="bi bi-cash-stack me-2"></i>Historial de Pagos</h2>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="card card-dark p-3 mb-4">
+    <form method="get" asp-action="Pagos" class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="search" value="@search" class="form-control form-control-dark" placeholder="Buscar por cliente o plan..." />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select name="metodo" class="form-select form-control-dark">
+                <option value="">-- Todos los Métodos --</option>
+                <option value="Efectivo" selected="@(metodo == "Efectivo")">Efectivo</option>
+                <option value="Tarjeta de Crédito" selected="@(metodo == "Tarjeta de Crédito")">Tarjeta de Crédito</option>
+                <option value="Tarjeta de Débito" selected="@(metodo == "Tarjeta de Débito")">Tarjeta de Débito</option>
+                <option value="Transferencia" selected="@(metodo == "Transferencia")">Transferencia</option>
+            </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-muscle flex-grow-1">
+                <i class="bi bi-search me-1"></i>Buscar
+            </button>
+            <a asp-action="Pagos" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Limpiar
+            </a>
+        </div>
+    </form>
 </div>
 
 <div class="card card-dark p-3">
@@ -20,26 +57,59 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var p in Model)
+                @if (!Model.Any())
                 {
                     <tr>
-                        <td>@p.Fecha.ToString("g")</td>
-                        <td><strong>@(p.Cliente != null ? $"{p.Cliente.Nombre} {p.Cliente.Apellido}" : $"Cliente #{p.ClienteId}")</strong></td>
-                        <td class="text-success font-monospace"><strong>$@p.Monto.ToString("F2")</strong></td>
-                        <td><span class="badge bg-secondary">@p.MetodoPago</span></td>
-                        <td>
-                            @if (p.Estado == "Completado")
-                            {
-                                <span class="badge bg-success">Completado</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-warning text-dark">@p.Estado</span>
-                            }
-                        </td>
+                        <td colspan="5" class="text-center py-4 text-muted">No se encontraron pagos que coincidan con la búsqueda.</td>
                     </tr>
+                }
+                else
+                {
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>@p.Fecha.ToString("dd/MM/yyyy hh:mm tt")</td>
+                            <td><strong>@(p.Cliente != null ? $"{p.Cliente.Nombre} {p.Cliente.Apellido}" : $"Cliente #{p.ClienteId}")</strong></td>
+                            <td class="text-success font-monospace"><strong>$@p.Monto.ToString("F2")</strong></td>
+                            <td><span class="badge bg-secondary">@p.MetodoPago</span></td>
+                            <td>
+                                @if (p.Estado == "Completado")
+                                {
+                                    <span class="badge bg-success">Completado</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@p.Estado</span>
+                                }
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination Controls -->
+    @if (totalPages > 1)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+            <small class="text-muted">Mostrando @startItem-@endItem de @totalItems registros</small>
+            <nav aria-label="Navegación de páginas">
+                <ul class="pagination pagination-sm m-0">
+                    <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link bg-dark text-light border-secondary" asp-action="Pagos" asp-route-search="@search" asp-route-metodo="@metodo" asp-route-page="@(currentPage - 1)">Anterior</a>
+                    </li>
+                    @for (int p = 1; p <= totalPages; p++)
+                    {
+                        <li class="page-item @(p == currentPage ? "active" : "")">
+                            <a class="page-link @(p == currentPage ? "bg-danger border-danger text-white" : "bg-dark text-light border-secondary")" asp-action="Pagos" asp-route-search="@search" asp-route-metodo="@metodo" asp-route-page="@p">@p</a>
+                        </li>
+                    }
+                    <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                        <a class="page-link bg-dark text-light border-secondary" asp-action="Pagos" asp-route-search="@search" asp-route-metodo="@metodo" asp-route-page="@(currentPage + 1)">Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
 </div>

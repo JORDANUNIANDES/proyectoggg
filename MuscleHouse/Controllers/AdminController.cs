@@ -72,9 +72,40 @@ namespace MuscleHouse.Controllers
 
         // ================= CLIENTES =================
         [HttpGet]
-        public async Task<IActionResult> Clientes()
+        public async Task<IActionResult> Clientes(string? search, string? estado, int page = 1)
         {
-            var clients = await _dbContext.Clientes.Include(c => c.User).Include(c => c.Entrenador).ToListAsync();
+            var query = _dbContext.Clientes.Include(c => c.User).Include(c => c.Entrenador).Include(c => c.Membresias).ThenInclude(m => m.Plan).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim().ToLower();
+                query = query.Where(c => c.Nombre.ToLower().Contains(term) ||
+                                         c.Apellido.ToLower().Contains(term) ||
+                                         (c.Nombre + " " + c.Apellido).ToLower().Contains(term) ||
+                                         c.Telefono.Contains(term) ||
+                                         (c.User != null && c.User.Email != null && c.User.Email.ToLower().Contains(term)));
+            }
+
+            if (estado == "Activo") query = query.Where(c => c.Activo);
+            else if (estado == "Inactivo") query = query.Where(c => !c.Activo);
+
+            int totalItems = await query.CountAsync();
+            int pageSize = 10;
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            page = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
+
+            var clients = await query.OrderBy(c => c.Nombre).ThenBy(c => c.Apellido)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.Search = search;
+            ViewBag.Estado = estado;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.PageSize = pageSize;
+
             return View(clients);
         }
 
@@ -432,27 +463,106 @@ namespace MuscleHouse.Controllers
 
         // ================= MEMBRESÍAS, PAGOS Y ASISTENCIAS =================
         [HttpGet]
-        public async Task<IActionResult> Membresias()
+        public async Task<IActionResult> Membresias(string? search, string? estado, int page = 1)
         {
-            var membresias = await _dbContext.Membresias
-                .Include(m => m.Cliente)
-                .Include(m => m.Plan)
-                .OrderByDescending(m => m.FechaInicio)
+            var query = _dbContext.Membresias.Include(m => m.Cliente).Include(m => m.Plan).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim().ToLower();
+                query = query.Where(m => (m.Cliente != null && (m.Cliente.Nombre.ToLower().Contains(term) || m.Cliente.Apellido.ToLower().Contains(term) || (m.Cliente.Nombre + " " + m.Cliente.Apellido).ToLower().Contains(term))) ||
+                                         (m.Plan != null && m.Plan.Nombre.ToLower().Contains(term)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(estado))
+            {
+                query = query.Where(m => m.Estado == estado);
+            }
+
+            int totalItems = await query.CountAsync();
+            int pageSize = 10;
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            page = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
+
+            var membresias = await query.OrderByDescending(m => m.FechaInicio)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            ViewBag.Search = search;
+            ViewBag.Estado = estado;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.PageSize = pageSize;
+
             return View(membresias);
         }
 
         [HttpGet]
-        public async Task<IActionResult> Pagos()
+        public async Task<IActionResult> Pagos(string? search, string? metodo, int page = 1)
         {
-            var pagos = await _paymentService.GetAllPaymentsAsync();
+            var query = _dbContext.Pagos.Include(p => p.Cliente).Include(p => p.Membresia).ThenInclude(m => m.Plan).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim().ToLower();
+                query = query.Where(p => (p.Cliente != null && (p.Cliente.Nombre.ToLower().Contains(term) || p.Cliente.Apellido.ToLower().Contains(term) || (p.Cliente.Nombre + " " + p.Cliente.Apellido).ToLower().Contains(term))) ||
+                                         (p.Membresia != null && p.Membresia.Plan != null && p.Membresia.Plan.Nombre.ToLower().Contains(term)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(metodo))
+            {
+                query = query.Where(p => p.MetodoPago == metodo);
+            }
+
+            int totalItems = await query.CountAsync();
+            int pageSize = 10;
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            page = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
+
+            var pagos = await query.OrderByDescending(p => p.Fecha)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.Search = search;
+            ViewBag.Metodo = metodo;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.PageSize = pageSize;
+
             return View(pagos);
         }
 
         [HttpGet]
-        public async Task<IActionResult> Asistencias()
+        public async Task<IActionResult> Asistencias(string? search, int page = 1)
         {
-            var asistencias = await _attendanceService.GetAllAttendanceAsync();
+            var query = _dbContext.Asistencias.Include(a => a.Cliente).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim().ToLower();
+                query = query.Where(a => a.Cliente != null && (a.Cliente.Nombre.ToLower().Contains(term) || a.Cliente.Apellido.ToLower().Contains(term) || (a.Cliente.Nombre + " " + a.Cliente.Apellido).ToLower().Contains(term) || a.Cliente.Telefono.Contains(term)));
+            }
+
+            int totalItems = await query.CountAsync();
+            int pageSize = 10;
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            page = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
+
+            var asistencias = await query.OrderByDescending(a => a.FechaHora)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.Search = search;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.PageSize = pageSize;
+
             return View(asistencias);
         }
 
