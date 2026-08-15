@@ -153,8 +153,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         $(document).ready(function() {
-            var mhRedFamily = ['#E31C25', '#C91820', '#A81219', '#FF3038', '#7F0E14', '#F45B61'];
             var textLightColor = '#F5F5F5';
+
+            // Distinct, brand-aligned color palettes for dynamic categories
+            var planColors = ['#E31C25', '#FF3038', '#A81219', '#F5F5F5', '#9EA3A8', '#4DA3FF'];
+            var paymentColors = ['#E31C25', '#35C759', '#4DA3FF', '#FFB020', '#A81219', '#F5F5F5'];
 
             @if (Model.VentasPorPlan.Any())
             {
@@ -167,7 +170,7 @@
                         labels: @Html.Raw(Json.Serialize(planLabels)),
                         datasets: [{
                             data: @Html.Raw(Json.Serialize(planValues)),
-                            backgroundColor: mhRedFamily,
+                            backgroundColor: planColors,
                             borderColor: '#17191B',
                             borderWidth: 2
                         }]
@@ -178,7 +181,11 @@
                         plugins: {
                             legend: {
                                 position: 'right',
-                                labels: { color: textLightColor, font: { family: 'Inter', size: 12 } }
+                                labels: {
+                                    color: textLightColor,
+                                    font: { family: 'Inter', size: 12, weight: 'bold' },
+                                    padding: 12
+                                }
                             }
                         }
                     }
@@ -197,7 +204,7 @@
                         labels: @Html.Raw(Json.Serialize(payLabels)),
                         datasets: [{
                             data: @Html.Raw(Json.Serialize(payValues)),
-                            backgroundColor: mhRedFamily,
+                            backgroundColor: paymentColors,
                             borderColor: '#17191B',
                             borderWidth: 2
                         }]
@@ -208,7 +215,11 @@
                         plugins: {
                             legend: {
                                 position: 'right',
-                                labels: { color: textLightColor, font: { family: 'Inter', size: 12 } }
+                                labels: {
+                                    color: textLightColor,
+                                    font: { family: 'Inter', size: 12, weight: 'bold' },
+                                    padding: 12
+                                }
                             }
                         }
                     }
