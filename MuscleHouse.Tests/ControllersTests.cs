@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -23,6 +24,106 @@ namespace MuscleHouse.Tests
             var store = new Mock<IUserStore<ApplicationUser>>();
             var mgr = new Mock<UserManager<ApplicationUser>>(store.Object, null!, null!, null!, null!, null!, null!, null!, null!);
             return mgr;
+        }
+
+        private Mock<SignInManager<ApplicationUser>> GetMockSignInManager(Mock<UserManager<ApplicationUser>> userManagerMock)
+        {
+            var contextAccessorMock = new Mock<IHttpContextAccessor>();
+            var claimsFactoryMock = new Mock<IUserClaimsPrincipalFactory<ApplicationUser>>();
+            var signInManagerMock = new Mock<SignInManager<ApplicationUser>>(
+                userManagerMock.Object,
+                contextAccessorMock.Object,
+                claimsFactoryMock.Object,
+                null!, null!, null!, null!);
+
+            return signInManagerMock;
+        }
+
+        [Fact]
+        public async Task AccountController_Register_CreatesUserWithUsuarioRoleAndRedirectsToClienteDashboard()
+        {
+            // Arrange
+            var userMgrMock = GetMockUserManager();
+            var signInMgrMock = GetMockSignInManager(userMgrMock);
+
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+            using var dbContext = new ApplicationDbContext(options);
+
+            userMgrMock.Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync((ApplicationUser?)null);
+            userMgrMock.Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success);
+            userMgrMock.Setup(m => m.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Usuario"))
+                .ReturnsAsync(IdentityResult.Success);
+
+            var controller = new AccountController(signInMgrMock.Object, userMgrMock.Object, dbContext);
+            controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
+
+            var model = new RegisterViewModel
+            {
+                Email = "nuevo_usuario@test.com",
+                Password = "MusclePassword123!",
+                ConfirmPassword = "MusclePassword123!",
+                Nombre = "Pedro",
+                Apellido = "Gomez",
+                Telefono = "7000-1111",
+                FechaNacimiento = DateTime.Today.AddYears(-22),
+                Objetivo = "Ganar masa muscular"
+            };
+
+            // Act
+            var result = await controller.Register(model);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Dashboard", redirectResult.ActionName);
+            Assert.Equal("Cliente", redirectResult.ControllerName);
+
+            userMgrMock.Verify(m => m.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Usuario"), Times.Once);
+
+            var createdCliente = await dbContext.Clientes.FirstOrDefaultAsync(c => c.Nombre == "Pedro");
+            Assert.NotNull(createdCliente);
+            Assert.Equal("Gomez", createdCliente.Apellido);
+        }
+
+        [Fact]
+        public async Task AccountController_Register_DuplicateEmail_ReturnsViewWithModelError()
+        {
+            // Arrange
+            var userMgrMock = GetMockUserManager();
+            var signInMgrMock = GetMockSignInManager(userMgrMock);
+
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+            using var dbContext = new ApplicationDbContext(options);
+
+            userMgrMock.Setup(m => m.FindByEmailAsync("existente@test.com"))
+                .ReturnsAsync(new ApplicationUser { Email = "existente@test.com" });
+
+            var controller = new AccountController(signInMgrMock.Object, userMgrMock.Object, dbContext);
+
+            var model = new RegisterViewModel
+            {
+                Email = "existente@test.com",
+                Password = "MusclePassword123!",
+                ConfirmPassword = "MusclePassword123!",
+                Nombre = "Pedro",
+                Apellido = "Gomez",
+                Telefono = "7000-1111",
+                FechaNacimiento = DateTime.Today.AddYears(-22),
+                Objetivo = "Pérdida de peso"
+            };
+
+            // Act
+            var result = await controller.Register(model);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.False(controller.ModelState.IsValid);
+            Assert.True(controller.ModelState.ContainsKey("Email"));
         }
 
         [Fact]
