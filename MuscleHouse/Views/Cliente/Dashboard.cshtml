@@ -1,35 +1,35 @@
-﻿@model MuscleHouse.ViewModels.ClienteDashboardViewModel
+@model MuscleHouse.ViewModels.ClienteDashboardViewModel
 @{
     ViewData["Title"] = "Mi Perfil de Entrenamiento";
     var latestProgress = Model.HistorialProgreso.OrderByDescending(p => p.Fecha).FirstOrDefault();
 }
 
 <div class="mb-4">
-    <h2 class="fw-bold text-red"><i class="bi bi-speedometer2"></i> Mi Dashboard — MUSCLE HOUSE</h2>
-    <p class="text-gray">¡Bienvenido de vuelta, <strong>@Model.Cliente?.Nombre</strong>! Aquí tienes un análisis interactivo de tu evolución física en MUSCLE HOUSE.</p>
+    <h2 class="fw-bold text-red"><i class="bi bi-speedometer2 me-2"></i>Mi Dashboard — MUSCLE HOUSE</h2>
+    <p class="text-secondary">¡Bienvenido de vuelta, <strong>@Model.Cliente?.Nombre</strong>! Aquí tienes un análisis interactivo de tu evolución física en MUSCLE HOUSE.</p>
 </div>
 
 <!-- KPI Cards -->
 <div class="row g-4 mb-5">
     <div class="col-md-4">
-        <div class="card card-mh p-4 text-center">
-            <h6 class="text-gray small text-uppercase m-0">Estado de Membresía</h6>
+        <div class="card card-dark p-4 text-center">
+            <h6 class="text-muted small text-uppercase m-0 fw-bold">Estado de Membresía</h6>
             <h3 class="fw-bold text-red mt-2">@(Model.MembresiaActual?.Plan?.Nombre ?? "Ninguna")</h3>
-            <p class="text-gray small m-0 mt-1">Días restantes: <strong class="text-white">@Model.DiasRestantes</strong></p>
+            <p class="text-secondary small m-0 mt-1">Días restantes: <strong class="text-light">@Model.DiasRestantes</strong></p>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card card-mh p-4 text-center">
-            <h6 class="text-gray small text-uppercase m-0">Mi Entrenador Asignado</h6>
-            <h3 class="fw-bold text-white mt-2">@(Model.Entrenador != null ? $"{Model.Entrenador.Nombre} {Model.Entrenador.Apellido}" : "Sin Asignar")</h3>
-            <p class="text-gray small m-0 mt-1">@Model.Entrenador?.Especialidad</p>
+        <div class="card card-dark p-4 text-center">
+            <h6 class="text-muted small text-uppercase m-0 fw-bold">Mi Entrenador Asignado</h6>
+            <h3 class="fw-bold text-light mt-2">@(Model.Entrenador != null ? $"{Model.Entrenador.Nombre} {Model.Entrenador.Apellido}" : "Sin Asignar")</h3>
+            <p class="text-secondary small m-0 mt-1">@Model.Entrenador?.Especialidad</p>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card card-mh p-4 text-center">
-            <h6 class="text-gray small text-uppercase m-0">Rutina Activa</h6>
+        <div class="card card-dark p-4 text-center">
+            <h6 class="text-muted small text-uppercase m-0 fw-bold">Rutina Activa</h6>
             <h3 class="fw-bold text-light mt-2">@(Model.RutinaActiva?.Nombre ?? "Ninguna")</h3>
-            <p class="text-gray small m-0 mt-1">@Model.RutinaActiva?.FechaCreacion.ToString("dd/MM/yyyy")</p>
+            <p class="text-secondary small m-0 mt-1">@Model.RutinaActiva?.FechaCreacion.ToString("dd/MM/yyyy")</p>
         </div>
     </div>
 </div>
@@ -37,8 +37,8 @@
 <!-- Medidas Fisicas Charts -->
 <div class="row g-4 mb-5">
     <div class="col-md-12">
-        <div class="card card-mh">
-            <div class="card-mh-header text-red"><i class="bi bi-graph-up"></i> Mi Evolución de Medidas Físicas y Peso</div>
+        <div class="card card-dark">
+            <div class="card-mh-header text-red"><i class="bi bi-graph-up me-2"></i>Mi Evolución de Medidas Físicas y Peso</div>
             <div class="card-body" style="height: 350px; display: flex; align-items: center; justify-content: center;">
                 @if (Model.HistorialProgreso.Any())
                 {
@@ -46,7 +46,7 @@
                 }
                 else
                 {
-                    <p class="text-gray m-0 italic">No has registrado medidas físicas de progreso todavía.</p>
+                    <p class="text-muted m-0 italic">No has registrado medidas físicas de progreso todavía.</p>
                 }
             </div>
         </div>
@@ -56,13 +56,13 @@
 <div class="row g-4">
     <!-- Active Routine Details -->
     <div class="col-md-6">
-        <div class="card card-mh h-100">
-            <div class="card-mh-header text-red"><i class="bi bi-list-task"></i> Mi Rutina Activa</div>
+        <div class="card card-dark h-100">
+            <div class="card-mh-header text-red"><i class="bi bi-list-task me-2"></i>Mi Rutina Activa</div>
             <div class="card-body p-0">
                 @if (Model.RutinaActiva != null && Model.RutinaActiva.RutinaEjercicios.Any())
                 {
                     <div class="table-responsive">
-                        <table class="table table-mh w-100 m-0">
+                        <table class="table table-dark w-100 m-0">
                             <thead>
                                 <tr>
                                     <th>Ejercicio</th>
@@ -75,10 +75,10 @@
                                 @foreach (var item in Model.RutinaActiva.RutinaEjercicios)
                                 {
                                     <tr>
-                                        <td>@item.Ejercicio?.Nombre</td>
+                                        <td><strong>@item.Ejercicio?.Nombre</strong></td>
                                         <td>@item.Series</td>
                                         <td>@item.Repeticiones</td>
-                                        <td class="text-red">@item.PesoRecomendado.ToString("F1") kg</td>
+                                        <td class="text-red fw-bold">@item.PesoRecomendado.ToString("F1") kg</td>
                                     </tr>
                                 }
                             </tbody>
@@ -88,7 +88,7 @@
                 else
                 {
                     <div class="p-4 text-center">
-                        <p class="text-gray m-0 italic">No tienes rutinas activas asignadas. Solicita una a tu entrenador.</p>
+                        <p class="text-muted m-0 italic">No tienes rutinas activas asignadas. Solicita una a tu entrenador.</p>
                     </div>
                 }
             </div>
@@ -97,8 +97,8 @@
 
     <!-- Self register progress form -->
     <div class="col-md-6">
-        <div class="card card-mh h-100">
-            <div class="card-mh-header text-red"><i class="bi bi-plus-circle"></i> Registrar Mis Medidas de Hoy</div>
+        <div class="card card-dark h-100">
+            <div class="card-mh-header text-red"><i class="bi bi-plus-circle me-2"></i>Registrar Mis Medidas de Hoy</div>
             <div class="card-body">
                 <form asp-action="RegistrarProgresoPropio" method="post">
                     @Html.AntiForgeryToken()
@@ -107,35 +107,35 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label text-red small fw-bold">Peso actual (kg)</label>
-                            <input type="number" step="0.01" name="Peso" class="form-control form-control-mh" required />
+                            <input type="number" step="0.01" name="Peso" class="form-control form-control-dark" required />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label text-red small fw-bold">Pecho (cm)</label>
-                            <input type="number" step="0.1" name="Pecho" class="form-control form-control-mh" required />
+                            <input type="number" step="0.1" name="Pecho" class="form-control form-control-dark" required />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label text-red small fw-bold">Cintura (cm)</label>
-                            <input type="number" step="0.1" name="Cintura" class="form-control form-control-mh" required />
+                            <input type="number" step="0.1" name="Cintura" class="form-control form-control-dark" required />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label text-red small fw-bold">Brazo (cm)</label>
-                            <input type="number" step="0.1" name="Brazo" class="form-control form-control-mh" required />
+                            <input type="number" step="0.1" name="Brazo" class="form-control form-control-dark" required />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label text-red small fw-bold">Pierna (cm)</label>
-                            <input type="number" step="0.1" name="Pierna" class="form-control form-control-mh" required />
+                            <input type="number" step="0.1" name="Pierna" class="form-control form-control-dark" required />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label text-red small fw-bold">Cadera (cm)</label>
-                            <input type="number" step="0.1" name="Cadera" class="form-control form-control-mh" required />
+                            <input type="number" step="0.1" name="Cadera" class="form-control form-control-dark" required />
                         </div>
                         <div class="col-12">
                             <label class="form-label text-red small fw-bold">Observaciones / Rendimiento</label>
-                            <input type="text" name="Observaciones" class="form-control form-control-mh" placeholder="ej. Sintiendo más fuerza en empujes." />
+                            <input type="text" name="Observaciones" class="form-control form-control-dark" placeholder="ej. Sintiendo más fuerza en empujes." />
                         </div>
                         <div class="col-12 mt-4 text-end">
-                            <button type="submit" class="btn btn-mh-red px-4">
-                                <i class="bi bi-check-circle"></i> Guardar Medidas de Progreso
+                            <button type="submit" class="btn btn-muscle px-4">
+                                <i class="bi bi-check-circle me-1"></i>Guardar Medidas de Progreso
                             </button>
                         </div>
                     </div>
@@ -166,15 +166,15 @@
                             {
                                 label: 'Peso (kg)',
                                 data: @Html.Raw(Json.Serialize(weights)),
-                                borderColor: '#e31c25',
-                                backgroundColor: 'rgba(227, 28, 37, 0.1)',
+                                borderColor: '#E31C25',
+                                backgroundColor: 'rgba(227, 28, 37, 0.15)',
                                 tension: 0.2,
                                 yAxisID: 'y'
                             },
                             {
                                 label: 'Brazo (cm)',
                                 data: @Html.Raw(Json.Serialize(arms)),
-                                borderColor: '#ffffff',
+                                borderColor: '#F5F5F5',
                                 backgroundColor: 'transparent',
                                 tension: 0.2,
                                 yAxisID: 'y1'
@@ -182,7 +182,7 @@
                             {
                                 label: 'Cintura (cm)',
                                 data: @Html.Raw(Json.Serialize(waists)),
-                                borderColor: '#cccccc',
+                                borderColor: '#D0D3D6',
                                 backgroundColor: 'transparent',
                                 tension: 0.2,
                                 yAxisID: 'y1'
@@ -194,29 +194,29 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: {
-                                labels: { color: '#ffffff' }
+                                labels: { color: '#F5F5F5', font: { family: 'Inter', size: 12 } }
                             }
                         },
                         scales: {
                             x: {
-                                ticks: { color: '#cccccc' },
-                                grid: { color: '#242424' }
+                                ticks: { color: '#D0D3D6' },
+                                grid: { color: '#2A2D30' }
                             },
                             y: {
                                 type: 'linear',
                                 display: true,
                                 position: 'left',
-                                title: { display: true, text: 'Cargas / Peso (kg)', color: '#e31c25' },
-                                ticks: { color: '#cccccc' },
-                                grid: { color: '#242424' }
+                                title: { display: true, text: 'Cargas / Peso (kg)', color: '#E31C25' },
+                                ticks: { color: '#D0D3D6' },
+                                grid: { color: '#2A2D30' }
                             },
                             y1: {
                                 type: 'linear',
                                 display: true,
                                 position: 'right',
-                                title: { display: true, text: 'Medidas (cm)', color: '#ffffff' },
-                                ticks: { color: '#cccccc' },
-                                grid: { drawOnChartArea: false } // only want the grid lines for one axis
+                                title: { display: true, text: 'Medidas (cm)', color: '#F5F5F5' },
+                                ticks: { color: '#D0D3D6' },
+                                grid: { drawOnChartArea: false }
                             }
                         }
                     }

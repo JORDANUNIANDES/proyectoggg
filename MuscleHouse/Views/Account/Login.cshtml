@@ -1,14 +1,14 @@
-﻿@model MuscleHouse.ViewModels.LoginViewModel
+@model MuscleHouse.ViewModels.LoginViewModel
 @{
     ViewData["Title"] = "Iniciar Sesión";
 }
 
 <div class="row justify-content-center py-5">
     <div class="col-md-5">
-        <div class="card card-mh p-4">
+        <div class="card card-dark p-4">
             <div class="text-center mb-4">
-                <h2 class="fw-bold text-orange">MUSCLE <span class="text-yellow">HOUSE</span></h2>
-                <p class="text-gray m-0">Inicie sesión para acceder a su perfil de entrenamiento</p>
+                <h2 class="fw-bold text-red">MUSCLE <span class="text-light">HOUSE</span></h2>
+                <p class="text-secondary m-0">Inicie sesión para acceder a su perfil de entrenamiento</p>
             </div>
 
             <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
@@ -16,25 +16,25 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
                 <div class="mb-3">
-                    <label asp-for="Email" class="form-label fw-semibold text-orange">Correo Electrónico</label>
-                    <input asp-for="Email" class="form-control form-control-mh" placeholder="correo@musclehouse.com" required />
+                    <label asp-for="Email" class="form-label fw-semibold text-light">Correo Electrónico</label>
+                    <input asp-for="Email" class="form-control form-control-dark" placeholder="correo@musclehouse.com" required />
                     <span asp-validation-for="Email" class="text-danger small"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Password" class="form-label fw-semibold text-orange">Contraseña</label>
-                    <input asp-for="Password" class="form-control form-control-mh" type="password" placeholder="••••••••" required />
+                    <label asp-for="Password" class="form-label fw-semibold text-light">Contraseña</label>
+                    <input asp-for="Password" class="form-control form-control-dark" type="password" placeholder="••••••••" required />
                     <span asp-validation-for="Password" class="text-danger small"></span>
                 </div>
 
                 <div class="mb-3 form-check">
-                    <input asp-for="RememberMe" class="form-check-input" style="background-color: var(--mh-dark-bg); border-color: var(--mh-dark-border);" />
-                    <label asp-for="RememberMe" class="form-check-label text-gray small">Recordarme en este dispositivo</label>
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label text-secondary small">Recordarme en este dispositivo</label>
                 </div>
 
                 <div class="mt-4">
-                    <button type="submit" class="btn btn-mh-orange w-100 py-2.5">
-                        <i class="bi bi-box-arrow-in-right"></i> Ingresar a la plataforma
+                    <button type="submit" class="btn btn-muscle w-100 py-2">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Ingresar a la plataforma
                     </button>
                 </div>
             </form>

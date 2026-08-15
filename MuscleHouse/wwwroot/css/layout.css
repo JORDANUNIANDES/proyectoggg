@@ -1,7 +1,7 @@
 /* Layout Structures for MUSCLE HOUSE */
 
 .navbar-mh {
-    background-color: var(--mh-black);
+    background-color: var(--mh-surface);
     border-bottom: 2px solid var(--mh-red);
     padding: 0.8rem 1.5rem;
 }
@@ -14,15 +14,15 @@
 }
 
 .navbar-brand-mh span {
-    color: var(--mh-white);
+    color: var(--mh-text);
 }
 
 .footer-mh {
-    background-color: var(--mh-black);
+    background-color: var(--mh-surface);
     border-top: 1px solid var(--mh-border);
     color: var(--mh-text-secondary);
     font-size: 0.9rem;
-    padding: 1rem 0;
+    padding: 1.2rem 0;
 }
 
 /* Sidebar Navigation */
@@ -33,38 +33,43 @@
 
 .sidebar-mh {
     width: 260px;
-    background-color: var(--mh-black);
+    background-color: var(--mh-surface);
     border-right: 1px solid var(--mh-border);
-    transition: all 0.3s;
+    transition: all 0.3s ease;
 }
 
 .sidebar-mh .nav-link {
-    color: var(--mh-text-primary);
+    color: var(--mh-text-secondary);
     padding: 0.8rem 1.5rem;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     font-weight: 500;
     border-left: 3px solid transparent;
+    transition: all 0.2s ease;
 }
 
 .sidebar-mh .nav-link:hover {
-    color: var(--mh-red);
-    background-color: rgba(227, 28, 37, 0.05);
+    color: var(--mh-text);
+    background-color: var(--mh-card-elevated);
     border-left: 3px solid var(--mh-red-hover);
 }
 
 .sidebar-mh .nav-link.active {
-    color: var(--mh-red);
-    background-color: rgba(227, 28, 37, 0.08);
+    color: var(--mh-text);
+    background-color: var(--mh-card-elevated);
     border-left: 3px solid var(--mh-red);
     font-weight: 700;
 }
 
+.sidebar-mh .nav-link i {
+    font-size: 1.1rem;
+}
+
 .content-mh {
     flex: 1;
-    padding: 2rem;
-    background-color: var(--mh-dark);
+    padding: 2.2rem;
+    background-color: var(--mh-bg);
 }
 
 @media (max-width: 768px) {

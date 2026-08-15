@@ -1,36 +1,36 @@
-﻿@model MuscleHouse.ViewModels.AdminDashboardViewModel
+@model MuscleHouse.ViewModels.AdminDashboardViewModel
 @{
     ViewData["Title"] = "Panel Administrativo Premium";
 }
 
 <div class="mb-4">
-    <h2 class="fw-bold text-red"><i class="bi bi-speedometer2"></i> Dashboard Administrativo — MUSCLE HOUSE</h2>
-    <p class="text-gray">Visualización en tiempo real de métricas, estadísticas financieras y rendimiento de MUSCLE HOUSE.</p>
+    <h2 class="fw-bold text-red"><i class="bi bi-speedometer2 me-2"></i>Dashboard Administrativo — MUSCLE HOUSE</h2>
+    <p class="text-secondary">Visualización en tiempo real de métricas, estadísticas financieras y rendimiento de MUSCLE HOUSE.</p>
 </div>
 
 <!-- Key KPIs -->
 <div class="row g-4 mb-5">
     <div class="col-md-3">
-        <div class="card card-mh p-4 text-center">
-            <h6 class="text-gray small text-uppercase">Total Clientes</h6>
+        <div class="card card-dark p-4 text-center">
+            <h6 class="text-muted small text-uppercase fw-bold">Total Clientes</h6>
             <h2 class="display-5 fw-bold text-red m-0">@Model.TotalClientes</h2>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card card-mh p-4 text-center">
-            <h6 class="text-gray small text-uppercase">Membresías Activas</h6>
-            <h2 class="display-5 fw-bold text-white m-0">@Model.TotalMembresiasActivas</h2>
+        <div class="card card-dark p-4 text-center">
+            <h6 class="text-muted small text-uppercase fw-bold">Membresías Activas</h6>
+            <h2 class="display-5 fw-bold text-light m-0">@Model.TotalMembresiasActivas</h2>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card card-mh p-4 text-center">
-            <h6 class="text-gray small text-uppercase">Total Coaches</h6>
-            <h2 class="display-5 fw-bold text-white m-0">@Model.TotalEntrenadores</h2>
+        <div class="card card-dark p-4 text-center">
+            <h6 class="text-muted small text-uppercase fw-bold">Total Coaches</h6>
+            <h2 class="display-5 fw-bold text-light m-0">@Model.TotalEntrenadores</h2>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card card-mh p-4 text-center">
-            <h6 class="text-gray small text-uppercase">Ingresos Totales</h6>
+        <div class="card card-dark p-4 text-center">
+            <h6 class="text-muted small text-uppercase fw-bold">Ingresos Totales</h6>
             <h2 class="display-5 fw-bold text-red m-0">$@Model.TotalIngresos.ToString("F2")</h2>
         </div>
     </div>
@@ -39,8 +39,8 @@
 <!-- Chart.js Graphics -->
 <div class="row g-4 mb-5">
     <div class="col-md-6">
-        <div class="card card-mh">
-            <div class="card-mh-header text-red"><i class="bi bi-pie-chart-fill"></i> Distribución de Membresías por Plan</div>
+        <div class="card card-dark">
+            <div class="card-mh-header text-red"><i class="bi bi-pie-chart-fill me-2"></i>Distribución de Membresías por Plan</div>
             <div class="card-body" style="height: 320px; display: flex; align-items: center; justify-content: center;">
                 @if (Model.VentasPorPlan.Any())
                 {
@@ -48,14 +48,14 @@
                 }
                 else
                 {
-                    <p class="text-gray m-0 italic">No hay suficientes datos de membresías.</p>
+                    <p class="text-muted m-0 italic">No hay suficientes datos de membresías.</p>
                 }
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card card-mh">
-            <div class="card-mh-header text-red"><i class="bi bi-wallet2"></i> Distribución de Ingresos por Método de Pago</div>
+        <div class="card card-dark">
+            <div class="card-mh-header text-red"><i class="bi bi-wallet2 me-2"></i>Distribución de Ingresos por Método de Pago</div>
             <div class="card-body" style="height: 320px; display: flex; align-items: center; justify-content: center;">
                 @if (Model.IngresosPorMetodoPago.Any())
                 {
@@ -63,7 +63,7 @@
                 }
                 else
                 {
-                    <p class="text-gray m-0 italic">No hay suficientes datos de transacciones de pago.</p>
+                    <p class="text-muted m-0 italic">No hay suficientes datos de transacciones de pago.</p>
                 }
             </div>
         </div>
@@ -73,13 +73,13 @@
 <!-- Lists / Recents -->
 <div class="row g-4 mb-5">
     <div class="col-md-6">
-        <div class="card card-mh h-100">
-            <div class="card-mh-header text-red"><i class="bi bi-currency-dollar"></i> Cobros y Pagos Recientes</div>
+        <div class="card card-dark h-100">
+            <div class="card-mh-header text-red"><i class="bi bi-currency-dollar me-2"></i>Cobros y Pagos Recientes</div>
             <div class="card-body p-0">
                 @if (Model.PagosRecientes.Any())
                 {
                     <div class="table-responsive">
-                        <table class="table table-mh w-100 m-0">
+                        <table class="table table-dark w-100 m-0">
                             <thead>
                                 <tr>
                                     <th>Fecha</th>
@@ -93,7 +93,7 @@
                                 {
                                     <tr>
                                         <td>@p.Fecha.ToString("dd/MM/yyyy")</td>
-                                        <td class="text-white fw-bold">$@p.Monto.ToString("F2")</td>
+                                        <td class="text-light fw-bold">$@p.Monto.ToString("F2")</td>
                                         <td>@p.MetodoPago</td>
                                         <td><span class="badge bg-success">@p.Estado</span></td>
                                     </tr>
@@ -105,7 +105,7 @@
                 else
                 {
                     <div class="p-4 text-center">
-                        <p class="text-gray m-0 italic">No hay transacciones registradas.</p>
+                        <p class="text-muted m-0 italic">No hay transacciones registradas.</p>
                     </div>
                 }
             </div>
@@ -113,13 +113,13 @@
     </div>
 
     <div class="col-md-6">
-        <div class="card card-mh h-100">
-            <div class="card-mh-header text-red"><i class="bi bi-clock-history"></i> Accesos y Asistencias Recientes</div>
+        <div class="card card-dark h-100">
+            <div class="card-mh-header text-red"><i class="bi bi-clock-history me-2"></i>Accesos y Asistencias Recientes</div>
             <div class="card-body p-0">
                 @if (Model.AsistenciasRecientes.Any())
                 {
                     <div class="table-responsive">
-                        <table class="table table-mh w-100 m-0">
+                        <table class="table table-dark w-100 m-0">
                             <thead>
                                 <tr>
                                     <th>Cliente</th>
@@ -130,7 +130,7 @@
                                 @foreach (var a in Model.AsistenciasRecientes)
                                 {
                                     <tr>
-                                        <td>@a.Cliente?.Nombre @a.Cliente?.Apellido</td>
+                                        <td><strong>@a.Cliente?.Nombre @a.Cliente?.Apellido</strong></td>
                                         <td>@a.FechaHora.ToString("dd/MM/yyyy hh:mm tt")</td>
                                     </tr>
                                 }
@@ -141,7 +141,7 @@
                 else
                 {
                     <div class="p-4 text-center">
-                        <p class="text-gray m-0 italic">No hay asistencias registradas hoy.</p>
+                        <p class="text-muted m-0 italic">No hay asistencias registradas hoy.</p>
                     </div>
                 }
             </div>
@@ -153,11 +153,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         $(document).ready(function() {
-            // Chart.js color definitions to match MUSCLE HOUSE premium look
-            var redColor = '#e31c25';
-            var whiteColor = '#ffffff';
-            var grayColor = '#cccccc';
-            var textLightColor = '#ffffff';
+            var mhRedFamily = ['#E31C25', '#C91820', '#A81219', '#FF3038', '#7F0E14', '#F45B61'];
+            var textLightColor = '#F5F5F5';
 
             @if (Model.VentasPorPlan.Any())
             {
@@ -170,8 +167,8 @@
                         labels: @Html.Raw(Json.Serialize(planLabels)),
                         datasets: [{
                             data: @Html.Raw(Json.Serialize(planValues)),
-                            backgroundColor: [redColor, '#b31018', '#ffffff', '#cccccc', '#555555'],
-                            borderColor: '#141414',
+                            backgroundColor: mhRedFamily,
+                            borderColor: '#17191B',
                             borderWidth: 2
                         }]
                     },
@@ -181,7 +178,7 @@
                         plugins: {
                             legend: {
                                 position: 'right',
-                                labels: { color: textLightColor }
+                                labels: { color: textLightColor, font: { family: 'Inter', size: 12 } }
                             }
                         }
                     }
@@ -200,8 +197,8 @@
                         labels: @Html.Raw(Json.Serialize(payLabels)),
                         datasets: [{
                             data: @Html.Raw(Json.Serialize(payValues)),
-                            backgroundColor: [redColor, '#ffffff', '#555555'],
-                            borderColor: '#141414',
+                            backgroundColor: mhRedFamily,
+                            borderColor: '#17191B',
                             borderWidth: 2
                         }]
                     },
@@ -211,7 +208,7 @@
                         plugins: {
                             legend: {
                                 position: 'right',
-                                labels: { color: textLightColor }
+                                labels: { color: textLightColor, font: { family: 'Inter', size: 12 } }
                             }
                         }
                     }

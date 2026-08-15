@@ -1,10 +1,10 @@
-﻿@{
+@{
     ViewData["Title"] = "Gimnasio Inteligente";
 }
 
-<div class="py-5 text-center bg-dark-card rounded-3 mb-5 border border-secondary">
-    <h1 class="display-3 fw-bold text-orange">MUSCLE <span class="text-yellow">HOUSE</span></h1>
-    <p class="col-md-8 fs-4 mx-auto text-light">
+<div class="py-5 text-center card-dark rounded-3 mb-5 border border-secondary p-4">
+    <h1 class="display-3 fw-bold text-red">MUSCLE <span class="text-light">HOUSE</span></h1>
+    <p class="col-md-8 fs-4 mx-auto text-secondary">
         El santuario definitivo de la fuerza, la hipertrofia y el rendimiento físico.
         Bienvenido a la experiencia de entrenamiento inteligente.
     </p>
@@ -13,33 +13,33 @@
         {
             @if (User.IsInRole("Administrador"))
             {
-                <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-lg btn-mh-orange px-4 gap-3">
-                    <i class="bi bi-speedometer2"></i> Ir a Dashboard Admin
+                <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-lg btn-muscle px-4 gap-3">
+                    <i class="bi bi-speedometer2 me-1"></i>Ir a Dashboard Admin
                 </a>
             }
             else if (User.IsInRole("Recepcionista"))
             {
-                <a asp-controller="Recepcionista" asp-action="Dashboard" class="btn btn-lg btn-mh-orange px-4 gap-3">
-                    <i class="bi bi-speedometer2"></i> Ir a Dashboard Recepcionista
+                <a asp-controller="Recepcionista" asp-action="Dashboard" class="btn btn-lg btn-muscle px-4 gap-3">
+                    <i class="bi bi-speedometer2 me-1"></i>Ir a Dashboard Recepcionista
                 </a>
             }
             else if (User.IsInRole("Entrenador"))
             {
-                <a asp-controller="Entrenador" asp-action="Dashboard" class="btn btn-lg btn-mh-orange px-4 gap-3">
-                    <i class="bi bi-speedometer2"></i> Ir a Dashboard Coach
+                <a asp-controller="Entrenador" asp-action="Dashboard" class="btn btn-lg btn-muscle px-4 gap-3">
+                    <i class="bi bi-speedometer2 me-1"></i>Ir a Dashboard Coach
                 </a>
             }
             else if (User.IsInRole("Usuario"))
             {
-                <a asp-controller="Cliente" asp-action="Dashboard" class="btn btn-lg btn-mh-orange px-4 gap-3">
-                    <i class="bi bi-speedometer2"></i> Ver Mi Perfil de Cliente
+                <a asp-controller="Cliente" asp-action="Dashboard" class="btn btn-lg btn-muscle px-4 gap-3">
+                    <i class="bi bi-speedometer2 me-1"></i>Ver Mi Perfil de Cliente
                 </a>
             }
         }
         else
         {
-            <a asp-controller="Account" asp-action="Login" class="btn btn-lg btn-mh-orange px-5 py-3">
-                <i class="bi bi-box-arrow-in-right"></i> Acceder a la Plataforma
+            <a asp-controller="Account" asp-action="Login" class="btn btn-lg btn-muscle px-5 py-3">
+                <i class="bi bi-box-arrow-in-right me-1"></i>Acceder a la Plataforma
             </a>
         }
     </div>
@@ -47,34 +47,34 @@
 
 <div class="row g-4 mb-5">
     <div class="col-md-4">
-        <div class="card card-mh h-100 p-4">
-            <div class="fs-1 text-orange mb-3">
+        <div class="card card-dark h-100 p-4">
+            <div class="fs-1 text-red mb-3">
                 <i class="bi bi-lightning-charge-fill"></i>
             </div>
-            <h3 class="fw-bold">Entrenamiento de Fuerza</h3>
-            <p class="text-gray m-0">
+            <h3 class="fw-bold text-light">Entrenamiento de Fuerza</h3>
+            <p class="text-secondary m-0">
                 Instalaciones equipadas con el mejor equipamiento de carga libre, poleas y máquinas de hipertrofia.
             </p>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card card-mh h-100 p-4">
-            <div class="fs-1 text-yellow mb-3">
+        <div class="card card-dark h-100 p-4">
+            <div class="fs-1 text-red mb-3">
                 <i class="bi bi-robot"></i>
             </div>
-            <h3 class="fw-bold">Inteligencia Artificial</h3>
-            <p class="text-gray m-0">
+            <h3 class="fw-bold text-light">Inteligencia Artificial</h3>
+            <p class="text-secondary m-0">
                 Tu entrenador inteligente disponible las 24 horas para analizar tus cargas y darte soporte nutricional real.
             </p>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card card-mh h-100 p-4">
-            <div class="fs-1 text-orange mb-3">
+        <div class="card card-dark h-100 p-4">
+            <div class="fs-1 text-red mb-3">
                 <i class="bi bi-person-hearts"></i>
             </div>
-            <h3 class="fw-bold">Entrenadores Expertos</h3>
-            <p class="text-gray m-0">
+            <h3 class="fw-bold text-light">Entrenadores Expertos</h3>
+            <p class="text-secondary m-0">
                 Seguimiento personalizado de la mano de nuestro personal certificado para optimizar tu sobrecarga progresiva.
             </p>
         </div>
