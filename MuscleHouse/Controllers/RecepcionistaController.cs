@@ -109,7 +109,9 @@ namespace MuscleHouse.Controllers
         public async Task<IActionResult> CrearCliente()
         {
             ViewBag.Trainers = await _staffService.GetAllTrainersAsync();
-            ViewBag.Plans = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
+            var activePlans = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
+            ViewBag.Plans = activePlans;
+            ViewBag.Planes = activePlans;
             return View(new CreateClienteViewModel());
         }
 
@@ -120,7 +122,9 @@ namespace MuscleHouse.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.Trainers = await _staffService.GetAllTrainersAsync();
-                ViewBag.Plans = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
+                var activePlans = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
+                ViewBag.Plans = activePlans;
+                ViewBag.Planes = activePlans;
                 return View(model);
             }
 
@@ -133,7 +137,9 @@ namespace MuscleHouse.Controllers
                     ModelState.AddModelError(string.Empty, err.Description);
                 }
                 ViewBag.Trainers = await _staffService.GetAllTrainersAsync();
-                ViewBag.Plans = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
+                var activePlans = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
+                ViewBag.Plans = activePlans;
+                ViewBag.Planes = activePlans;
                 return View(model);
             }
 
@@ -170,7 +176,7 @@ namespace MuscleHouse.Controllers
             if (model.PlanId.HasValue)
             {
                 var plan = await _dbContext.Planes.FindAsync(model.PlanId.Value);
-                if (plan != null)
+                if (plan != null && plan.Activo)
                 {
                     var newMemb = await _membershipService.RenewMembershipAsync(cliente.Id, plan.Id, plan.DuracionDias, plan.Precio);
                     await _paymentService.RegisterPaymentAsync(cliente.Id, newMemb.Id, plan.Precio, "Efectivo");
@@ -219,8 +225,10 @@ namespace MuscleHouse.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
+            var activePlans = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
             ViewBag.Clients = await _dbContext.Clientes.Where(c => c.Activo).ToListAsync();
-            ViewBag.Planes = await _dbContext.Planes.Where(p => p.Activo).ToListAsync();
+            ViewBag.Plans = activePlans;
+            ViewBag.Planes = activePlans;
             ViewBag.Search = search;
             ViewBag.Estado = estado;
             ViewBag.CurrentPage = page;
@@ -320,7 +328,8 @@ namespace MuscleHouse.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                TempData["ErrorMessage"] = "Datos de renovación inválidos.";
+                return RedirectToAction(nameof(Membresias));
             }
 
             var cliente = await _staffService.GetClienteByIdAsync(model.ClienteId);
@@ -330,16 +339,17 @@ namespace MuscleHouse.Controllers
             }
 
             var plan = await _dbContext.Planes.FindAsync(model.PlanId);
-            if (plan == null)
+            if (plan == null || !plan.Activo)
             {
-                return NotFound("Plan no encontrado.");
+                TempData["ErrorMessage"] = "El plan seleccionado no existe o se encuentra inactivo.";
+                return RedirectToAction(nameof(Membresias));
             }
 
             var newMemb = await _membershipService.RenewMembershipAsync(model.ClienteId, plan.Id, plan.DuracionDias, plan.Precio);
             await _paymentService.RegisterPaymentAsync(model.ClienteId, newMemb.Id, plan.Precio, model.MetodoPago);
 
             TempData["SuccessMessage"] = $"¡Membresía {plan.Nombre} renovada con éxito para {cliente.Nombre}!";
-            return RedirectToAction(nameof(Dashboard));
+            return RedirectToAction(nameof(Membresias));
         }
 
         [HttpPost]

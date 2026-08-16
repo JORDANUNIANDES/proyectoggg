@@ -41,6 +41,42 @@ namespace MuscleHouse.Tests
         }
 
         [Fact]
+        public async Task RecepcionistaController_Membresias_PopulatesActivePlansOnly()
+        {
+            // Arrange
+            var mockStaff = new Mock<IStaffService>();
+            var mockMembership = new Mock<IMembershipService>();
+            var mockPayment = new Mock<IPaymentService>();
+            var mockAttendance = new Mock<IAttendanceService>();
+            var userMgrMock = GetMockUserManager();
+
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+            using var dbContext = new ApplicationDbContext(options);
+
+            var activePlan = new Plan { Id = 1, Nombre = "Mensual", DuracionDias = 30, Precio = 45, Descripcion = "Plan activo", Activo = true };
+            var inactivePlan = new Plan { Id = 2, Nombre = "Antiguo", DuracionDias = 30, Precio = 10, Descripcion = "Plan descontinuado", Activo = false };
+            dbContext.Planes.AddRange(activePlan, inactivePlan);
+            await dbContext.SaveChangesAsync();
+
+            var controller = new RecepcionistaController(
+                mockStaff.Object, mockMembership.Object, mockPayment.Object, mockAttendance.Object, userMgrMock.Object, dbContext);
+
+            // Act
+            var result = await controller.Membresias(search: null, estado: null, page: 1);
+
+            // Assert
+            Assert.IsType<ViewResult>(result);
+            var plans = Assert.IsAssignableFrom<IEnumerable<Plan>>(controller.ViewBag.Plans);
+            var planList = plans.ToList();
+
+            Assert.Single(planList);
+            Assert.Equal("Mensual", planList[0].Nombre);
+            Assert.True(planList[0].Activo);
+        }
+
+        [Fact]
         public async Task AdminController_Clientes_SearchAndPagination_ReturnsFilteredClients()
         {
             // Arrange
