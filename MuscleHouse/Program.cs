@@ -52,6 +52,7 @@ builder.Services.AddScoped<MuscleHouse.Services.IStaffService, MuscleHouse.Servi
 
 // Register AI Services and HttpClient
 builder.Services.AddHttpClient();
+builder.Services.AddScoped<MuscleHouse.Services.IAIContextService, MuscleHouse.Services.AIContextService>();
 builder.Services.AddScoped<MuscleHouse.Services.MockAIService>();
 builder.Services.AddScoped<MuscleHouse.Services.IAIService, MuscleHouse.Services.OpenAIAIService>();
 

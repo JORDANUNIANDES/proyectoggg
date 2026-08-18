@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
@@ -24,24 +26,40 @@ namespace MuscleHouse.Services
                 ?? configuration["OpenAI:ApiKey"];
         }
 
-        public async Task<string> ChatAsync(string clientUserId, string message)
+        public async Task<string> ChatAsync(AIUserContext? context, string message)
         {
             if (string.IsNullOrWhiteSpace(_apiKey))
             {
                 // API Key is absent -> Fallback to MockAIService
-                return await _mockFallback.ChatAsync(clientUserId, message);
+                return await _mockFallback.ChatAsync(context, message);
             }
 
             try
             {
-                // Call OpenAI API Chat Completion endpoint
+                // Build client context text
+                var contextText = BuildContextText(context);
+
+                // Call OpenAI API Chat Completion endpoint with model gpt-4o-mini
                 var requestBody = new
                 {
                     model = "gpt-4o-mini",
-                    messages = new[]
+                    messages = new object[]
                     {
-                        new { role = "system", content = "Eres un entrenador personal inteligente de primer nivel de MUSCLE HOUSE, un gimnasio moderno y deportivo con temática oscura y acento naranja. Escribe tus respuestas siempre en español de forma motivadora y profesional. El usuario te hará preguntas sobre rutinas, entrenamientos, nutrición o progreso." },
-                        new { role = "user", content = message }
+                        new
+                        {
+                            role = "system",
+                            content = "Eres el Asistente IA oficial de MUSCLE HOUSE, un gimnasio moderno y deportivo con estética oscura. Tu trabajo es dar soporte nutricional, consejos de entrenamiento y motivación basados en los datos del cliente. Responde siempre en español de forma profesional y empática. Utiliza el CONTEXTO DEL CLIENTE proporcionado. Si no hay datos sobre un tema, indícalo amablemente sin inventar datos. Recuerda que no puedes modificar directamente las rutinas o la base de datos."
+                        },
+                        new
+                        {
+                            role = "system",
+                            content = $"CONTEXTO DEL CLIENTE DE MUSCLE HOUSE:\n{contextText}"
+                        },
+                        new
+                        {
+                            role = "user",
+                            content = message
+                        }
                     },
                     temperature = 0.7
                 };
@@ -56,8 +74,8 @@ namespace MuscleHouse.Services
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorDetails = await response.Content.ReadAsStringAsync();
-                    return $"⚠️ Error de OpenAI API ({response.StatusCode}): {errorDetails}. Fallando al servicio local...\n\n" +
-                        await _mockFallback.ChatAsync(clientUserId, message);
+                    return $"⚠️ Error de OpenAI API ({response.StatusCode}): Fallando al servicio local de MUSCLE HOUSE...\n\n" +
+                        await _mockFallback.ChatAsync(context, message);
                 }
 
                 var responseJson = await response.Content.ReadFromJsonAsync<JsonElement>();
@@ -69,11 +87,58 @@ namespace MuscleHouse.Services
 
                 return result.ToString();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return $"⚠️ Error de comunicación con la IA: {ex.Message}. Fallando al servicio local...\n\n" +
-                    await _mockFallback.ChatAsync(clientUserId, message);
+                return "⚠️ No se pudo conectar con los servidores de OpenAI. Mostrando recomendación de MUSCLE HOUSE local...\n\n" +
+                    await _mockFallback.ChatAsync(context, message);
             }
+        }
+
+        private string BuildContextText(AIUserContext? context)
+        {
+            if (context == null)
+            {
+                return "Cliente no registrado o sin perfil de datos disponible.";
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"- Nombre: {context.Nombre}");
+            sb.AppendLine($"- Objetivo Fitness: {context.Objetivo}");
+
+            if (context.PesoActual.HasValue)
+            {
+                sb.AppendLine($"- Peso Actual: {context.PesoActual.Value:F2} kg");
+                sb.AppendLine($"- Medidas: Pecho {context.Pecho ?? 0:F1} cm, Cintura {context.Cintura ?? 0:F1} cm, Brazo {context.Brazo ?? 0:F1} cm, Pierna {context.Pierna ?? 0:F1} cm");
+            }
+            else
+            {
+                sb.AppendLine("- Registro Físico: No disponible");
+            }
+
+            if (!string.IsNullOrEmpty(context.NombreRutinaActiva) && context.EjerciciosRutina.Any())
+            {
+                sb.AppendLine($"- Rutina Activa: {context.NombreRutinaActiva}");
+                sb.AppendLine("  Ejercicios Asignados:");
+                foreach (var ex in context.EjerciciosRutina)
+                {
+                    sb.AppendLine($"    • {ex.NombreEjercicio} ({ex.GrupoMuscular}): {ex.Series}x{ex.Repeticiones} @ {ex.PesoRecomendado:F1} kg");
+                }
+            }
+            else
+            {
+                sb.AppendLine("- Rutina Activa: Sin rutina asignada actualmente");
+            }
+
+            if (context.UltimosRegistrosEntrenamiento.Any())
+            {
+                sb.AppendLine("  Últimos Registros de Rendimiento:");
+                foreach (var log in context.UltimosRegistrosEntrenamiento.Take(3))
+                {
+                    sb.AppendLine($"    • {log.NombreEjercicio}: {log.Series}x{log.Repeticiones} con {log.Peso:F1} kg (RPE {log.RPE ?? 8}/10) el {log.Fecha:dd/MM/yyyy}");
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }

@@ -12,15 +12,18 @@ namespace MuscleHouse.Controllers
     public class ChatController : Controller
     {
         private readonly IStaffService _staffService;
+        private readonly IAIContextService _aiContextService;
         private readonly IAIService _aiService;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public ChatController(
             IStaffService staffService,
+            IAIContextService aiContextService,
             IAIService aiService,
             UserManager<ApplicationUser> userManager)
         {
             _staffService = staffService;
+            _aiContextService = aiContextService;
             _aiService = aiService;
             _userManager = userManager;
         }
@@ -49,8 +52,11 @@ namespace MuscleHouse.Controllers
                 return NotFound("No se encontró su perfil de cliente de MUSCLE HOUSE.");
             }
 
-            // Call the IAIService (which automatically uses MockAIService or OpenAIAIService based on API Key availability)
-            var responseText = await _aiService.ChatAsync(userId, model.Message);
+            // Build client context securely based on authenticated UserId
+            var aiContext = await _aiContextService.BuildClientContextAsync(userId);
+
+            // Call IAIService passing client context
+            var responseText = await _aiService.ChatAsync(aiContext, model.Message);
 
             return Json(new { reply = responseText });
         }

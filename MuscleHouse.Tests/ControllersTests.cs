@@ -251,17 +251,20 @@ namespace MuscleHouse.Tests
         {
             // Arrange
             var mockStaff = new Mock<IStaffService>();
+            var mockAIContext = new Mock<IAIContextService>();
             var mockAI = new Mock<IAIService>();
             var mockUserMgr = GetMockUserManager();
 
             var user = new ApplicationUser { Id = "client-user-123", Email = "juan@test.com" };
             var cliente = new Cliente { Id = 1, UserId = user.Id, Nombre = "Juan" };
+            var context = new AIUserContext { ClienteId = 1, UserId = user.Id, Nombre = "Juan", Objetivo = "Aumento de masa muscular", PesoActual = 80 };
 
             mockUserMgr.Setup(m => m.GetUserId(It.IsAny<ClaimsPrincipal>())).Returns(user.Id);
             mockStaff.Setup(s => s.GetClienteByUserIdAsync(user.Id)).ReturnsAsync(cliente);
-            mockAI.Setup(ai => ai.ChatAsync(user.Id, "Hola")).ReturnsAsync("Respuesta de IA de prueba");
+            mockAIContext.Setup(c => c.BuildClientContextAsync(user.Id)).ReturnsAsync(context);
+            mockAI.Setup(ai => ai.ChatAsync(context, "Hola")).ReturnsAsync("Respuesta de IA de prueba");
 
-            var controller = new ChatController(mockStaff.Object, mockAI.Object, mockUserMgr.Object);
+            var controller = new ChatController(mockStaff.Object, mockAIContext.Object, mockAI.Object, mockUserMgr.Object);
 
             // Mock User identity for controller
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.Id) };
@@ -293,10 +296,11 @@ namespace MuscleHouse.Tests
         {
             // Arrange
             var mockStaff = new Mock<IStaffService>();
+            var mockAIContext = new Mock<IAIContextService>();
             var mockAI = new Mock<IAIService>();
             var mockUserMgr = GetMockUserManager();
 
-            var controller = new ChatController(mockStaff.Object, mockAI.Object, mockUserMgr.Object);
+            var controller = new ChatController(mockStaff.Object, mockAIContext.Object, mockAI.Object, mockUserMgr.Object);
             controller.ModelState.AddModelError("Message", "El mensaje no puede estar vacío.");
 
             var model = new ChatQueryViewModel { Message = "" };
