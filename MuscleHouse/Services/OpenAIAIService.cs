@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 
@@ -31,7 +32,8 @@ namespace MuscleHouse.Services
             if (string.IsNullOrWhiteSpace(_apiKey))
             {
                 // API Key is absent -> Fallback to MockAIService
-                return await _mockFallback.ChatAsync(context, message);
+                return "⚠️ [CONFIGURACIÓN] API Key de OpenAI no encontrada en variables de entorno u OpenAI:ApiKey. Mostrando recomendación de MUSCLE HOUSE local...\n\n" +
+                    await _mockFallback.ChatAsync(context, message);
             }
 
             try
@@ -73,7 +75,9 @@ namespace MuscleHouse.Services
                 var response = await _httpClient.SendAsync(request);
                 if (!response.IsSuccessStatusCode)
                 {
-                    return "⚠️ Error de comunicación con los servidores de OpenAI. Mostrando recomendación de MUSCLE HOUSE local...\n\n" +
+                    var errorRaw = await response.Content.ReadAsStringAsync();
+                    var sanitizedError = SanitizeError(errorRaw);
+                    return $"⚠️ Error de OpenAI API [HTTP {(int)response.StatusCode} {response.StatusCode}]: {sanitizedError}. Mostrando recomendación de MUSCLE HOUSE local...\n\n" +
                         await _mockFallback.ChatAsync(context, message);
                 }
 
@@ -94,9 +98,10 @@ namespace MuscleHouse.Services
 
                 return await _mockFallback.ChatAsync(context, message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return "⚠️ No se pudo conectar con los servidores de OpenAI. Mostrando recomendación de MUSCLE HOUSE local...\n\n" +
+                var sanitizedEx = SanitizeError(ex.Message);
+                return $"⚠️ Excepción al conectar con OpenAI [{ex.GetType().Name}]: {sanitizedEx}. Mostrando recomendación de MUSCLE HOUSE local...\n\n" +
                     await _mockFallback.ChatAsync(context, message);
             }
         }
@@ -146,6 +151,14 @@ namespace MuscleHouse.Services
             }
 
             return sb.ToString();
+        }
+
+        private string SanitizeError(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return "Sin detalles adicionales de error.";
+            var sanitized = Regex.Replace(input, @"sk-[A-Za-z0-9_-]+", "sk-***HIDDEN***");
+            sanitized = Regex.Replace(sanitized, @"Bearer\s+[A-Za-z0-9_.-]+", "Bearer ***HIDDEN***", RegexOptions.IgnoreCase);
+            return sanitized;
         }
     }
 }
