@@ -73,19 +73,26 @@ namespace MuscleHouse.Services
                 var response = await _httpClient.SendAsync(request);
                 if (!response.IsSuccessStatusCode)
                 {
-                    var errorDetails = await response.Content.ReadAsStringAsync();
-                    return $"⚠️ Error de OpenAI API ({response.StatusCode}): Fallando al servicio local de MUSCLE HOUSE...\n\n" +
+                    return "⚠️ Error de comunicación con los servidores de OpenAI. Mostrando recomendación de MUSCLE HOUSE local...\n\n" +
                         await _mockFallback.ChatAsync(context, message);
                 }
 
                 var responseJson = await response.Content.ReadFromJsonAsync<JsonElement>();
-                var content = responseJson.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
+                if (responseJson.TryGetProperty("choices", out var choices) && choices.ValueKind == JsonValueKind.Array && choices.GetArrayLength() > 0)
+                {
+                    var choice = choices[0];
+                    if (choice.TryGetProperty("message", out var msgObj) && msgObj.TryGetProperty("content", out var contentElement))
+                    {
+                        var content = contentElement.GetString() ?? string.Empty;
+                        var result = new StringBuilder();
+                        result.Append(content);
+                        result.Append("\n\n---\n*⚠️ Nota: Estas recomendaciones son generadas por la IA de MUSCLE HOUSE. No sustituyen el asesoramiento médico o profesional.*");
 
-                var result = new StringBuilder();
-                result.Append(content);
-                result.Append("\n\n---\n*⚠️ Nota: Estas recomendaciones son generadas por la IA de MUSCLE HOUSE. No sustituyen el asesoramiento médico o profesional.*");
+                        return result.ToString();
+                    }
+                }
 
-                return result.ToString();
+                return await _mockFallback.ChatAsync(context, message);
             }
             catch (Exception)
             {
