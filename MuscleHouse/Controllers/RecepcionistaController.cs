@@ -74,12 +74,11 @@ namespace MuscleHouse.Controllers
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                var term = search.Trim().ToLower();
-                query = query.Where(c => c.Nombre.ToLower().Contains(term) ||
-                                         c.Apellido.ToLower().Contains(term) ||
-                                         (c.Nombre + " " + c.Apellido).ToLower().Contains(term) ||
+                var term = search.Trim();
+                query = query.Where(c => c.Nombre.Contains(term) ||
+                                         c.Apellido.Contains(term) ||
                                          c.Telefono.Contains(term) ||
-                                         (c.User != null && c.User.Email != null && c.User.Email.ToLower().Contains(term)));
+                                         (c.User != null && c.User.Email != null && c.User.Email.Contains(term)));
             }
 
             if (estado == "Activo") query = query.Where(c => c.Activo);
@@ -205,9 +204,9 @@ namespace MuscleHouse.Controllers
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                var term = search.Trim().ToLower();
-                query = query.Where(m => (m.Cliente != null && (m.Cliente.Nombre.ToLower().Contains(term) || m.Cliente.Apellido.ToLower().Contains(term) || (m.Cliente.Nombre + " " + m.Cliente.Apellido).ToLower().Contains(term))) ||
-                                         (m.Plan != null && m.Plan.Nombre.ToLower().Contains(term)));
+                var term = search.Trim();
+                query = query.Where(m => (m.Cliente != null && (m.Cliente.Nombre.Contains(term) || m.Cliente.Apellido.Contains(term))) ||
+                                         (m.Plan != null && m.Plan.Nombre.Contains(term)));
             }
 
             if (!string.IsNullOrWhiteSpace(estado))
@@ -246,9 +245,9 @@ namespace MuscleHouse.Controllers
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                var term = search.Trim().ToLower();
-                query = query.Where(p => (p.Cliente != null && (p.Cliente.Nombre.ToLower().Contains(term) || p.Cliente.Apellido.ToLower().Contains(term) || (p.Cliente.Nombre + " " + p.Cliente.Apellido).ToLower().Contains(term))) ||
-                                         (p.Membresia != null && p.Membresia.Plan != null && p.Membresia.Plan.Nombre.ToLower().Contains(term)));
+                var term = search.Trim();
+                query = query.Where(p => (p.Cliente != null && (p.Cliente.Nombre.Contains(term) || p.Cliente.Apellido.Contains(term))) ||
+                                         (p.Membresia != null && p.Membresia.Plan != null && p.Membresia.Plan.Nombre.Contains(term)));
             }
 
             if (!string.IsNullOrWhiteSpace(metodo))
@@ -283,8 +282,8 @@ namespace MuscleHouse.Controllers
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                var term = search.Trim().ToLower();
-                query = query.Where(a => a.Cliente != null && (a.Cliente.Nombre.ToLower().Contains(term) || a.Cliente.Apellido.ToLower().Contains(term) || (a.Cliente.Nombre + " " + a.Cliente.Apellido).ToLower().Contains(term) || a.Cliente.Telefono.Contains(term)));
+                var term = search.Trim();
+                query = query.Where(a => a.Cliente != null && (a.Cliente.Nombre.Contains(term) || a.Cliente.Apellido.Contains(term) || a.Cliente.Telefono.Contains(term)));
             }
 
             int totalItems = await query.CountAsync();
