@@ -41,6 +41,44 @@ namespace MuscleHouse.Tests
         }
 
         [Fact]
+        public async Task MockAIService_ConversationalGreetingRules_VerifiesScenarios()
+        {
+            // Arrange
+            var mockService = new MockAIService();
+            var context = new AIUserContext
+            {
+                ClienteId = 1,
+                UserId = "user-jordan",
+                Nombre = "Jordan",
+                Objetivo = "Aumento de masa muscular",
+                PesoActual = 80
+            };
+
+            // Test 1: Pure greeting "Hola" -> Should respond with greeting
+            var reply1 = await mockService.ChatAsync(context, "Hola");
+            Assert.StartsWith("¡Hola, **Jordan**!", reply1);
+
+            // Test 2: Direct question without greeting -> Should NOT start with greeting
+            var reply2 = await mockService.ChatAsync(context, "¿Qué ejercicios puedo hacer para pecho?");
+            Assert.DoesNotContain("¡Hola, **Jordan**!", reply2);
+            Assert.Contains("pecho", reply2, StringComparison.OrdinalIgnoreCase);
+
+            // Test 3: Greeting + Question -> Should start with brief greeting and answer question
+            var reply3 = await mockService.ChatAsync(context, "Hola, ¿qué ejercicios puedo hacer para pecho?");
+            Assert.StartsWith("¡Hola, **Jordan**!", reply3);
+            Assert.Contains("pecho", reply3, StringComparison.OrdinalIgnoreCase);
+
+            // Test 4: Direct frequency question -> Should NOT start with greeting
+            var reply4 = await mockService.ChatAsync(context, "¿Cuántas veces por semana debería entrenar piernas?");
+            Assert.DoesNotContain("¡Hola, **Jordan**!", reply4);
+            Assert.Contains("piernas", reply4, StringComparison.OrdinalIgnoreCase);
+
+            // Test 5: Pure greeting "Buenas tardes" -> Should respond to greeting
+            var reply5 = await mockService.ChatAsync(context, "Buenas tardes");
+            Assert.StartsWith("¡Hola, **Jordan**!", reply5);
+        }
+
+        [Fact]
         public async Task RecepcionistaController_Membresias_PopulatesActivePlansOnly()
         {
             // Arrange

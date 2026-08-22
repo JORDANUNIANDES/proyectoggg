@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MuscleHouse.Services
@@ -11,73 +12,81 @@ namespace MuscleHouse.Services
         {
             if (context == null)
             {
-                return Task.FromResult("Hola, soy tu Asistente de IA de MUSCLE HOUSE. Lamentablemente, no pude encontrar tu perfil de cliente para darte recomendaciones personalizadas. ¿Eres un usuario registrado?");
+                return Task.FromResult("Lamentablemente, no pude encontrar tu perfil de cliente para darte recomendaciones personalizadas. ¿Eres un usuario registrado en MUSCLE HOUSE?");
             }
+
+            string trimmedMsg = message.Trim().ToLower();
+            bool hasGreeting = Regex.IsMatch(trimmedMsg, @"\b(hola|buenas|buenos días|buenas tardes|buenas noches|hey|saludos)\b", RegexOptions.IgnoreCase);
+            bool isPureGreeting = hasGreeting && (trimmedMsg.Length <= 18 || Regex.IsMatch(trimmedMsg, @"^(hola|buenas|buenos días|buenas tardes|buenas noches|hey|saludos)\s*[\!\?\. ]*$", RegexOptions.IgnoreCase));
 
             var response = new StringBuilder();
-            response.Append($"¡Hola, **{context.Nombre}**! 💪 Soy tu Asistente de IA de **MUSCLE HOUSE**.\n\n");
-            response.Append($"Analizando tu perfil, veo que tu objetivo actual es: **\"{context.Objetivo}\"**.\n\n");
 
-            // Contextualize based on progress measurements
-            if (context.PesoActual.HasValue)
+            // Scenario 1: Pure greeting from user
+            if (isPureGreeting)
             {
-                response.Append($"### 📊 Tu Estado Físico Actual\n");
-                response.Append($"- **Peso**: {context.PesoActual.Value:F2} kg\n");
-                response.Append($"- **Medidas**: Pecho {context.Pecho ?? 0:F1} cm | Cintura {context.Cintura ?? 0:F1} cm | Brazo {context.Brazo ?? 0:F1} cm | Pierna {context.Pierna ?? 0:F1} cm\n");
-                if (!string.IsNullOrEmpty(context.UltimasObservacionesProgreso))
-                {
-                    response.Append($"- **Últimas observaciones**: {context.UltimasObservacionesProgreso}\n");
-                }
-                response.Append("\n");
+                response.Append($"¡Hola, **{context.Nombre}**! 💪 ¿En qué te puedo apoyar hoy con tu entrenamiento en **MUSCLE HOUSE**?");
+                response.Append("\n\n---\n*⚠️ Nota: Estas recomendaciones son generadas automáticamente basándose en tus datos de MUSCLE HOUSE.*");
+                return Task.FromResult(response.ToString());
             }
 
-            // Contextualize based on routine
-            if (!string.IsNullOrEmpty(context.NombreRutinaActiva) && context.EjerciciosRutina.Any())
+            // Scenario 2: User greeted AND asked a question
+            if (hasGreeting)
             {
-                response.Append($"### 🏋️ Tu Rutina Activa: *{context.NombreRutinaActiva}*\n");
-                response.Append("Ejercicios que tienes asignados:\n");
-                foreach (var re in context.EjerciciosRutina.Take(3))
-                {
-                    response.Append($"- **{re.NombreEjercicio}**: {re.Series} series x {re.Repeticiones} reps (Peso sugerido: {re.PesoRecomendado:F1} kg)\n");
-                }
-                response.Append("\n");
+                response.Append($"¡Hola, **{context.Nombre}**! ");
             }
 
-            // Contextualize based on training logs and progressive overload
-            if (context.UltimosRegistrosEntrenamiento.Any())
+            // Scenario 3: Pure question/request -> No greeting header!
+            // Build direct answer based on user query
+            if (trimmedMsg.Contains("pecho") || trimmedMsg.Contains("pectoral"))
             {
-                response.Append($"### 📈 Análisis de Rendimiento y Cargas\n");
-                response.Append("He revisado tus últimos registros de entrenamiento:\n");
-                foreach (var log in context.UltimosRegistrosEntrenamiento.Take(3))
-                {
-                    response.Append($"- En **{log.NombreEjercicio}** registraste {log.Series}x{log.Repeticiones} con **{log.Peso:F1} kg** (RPE: {log.RPE ?? 8}/10) el {log.Fecha:dd/MM/yyyy}.\n");
-                }
-
-                if (context.IncrementoSobrecargaProgresiva.HasValue && context.IncrementoSobrecargaProgresiva.Value > 0)
-                {
-                    response.Append($"\n¡Excelente! Veo un incremento de **+{context.IncrementoSobrecargaProgresiva.Value:F1} kg** en tus cargas recientes. Esto es un ejemplo perfecto de sobrecarga progresiva. ¡Sigue así!\n");
-                }
-                response.Append("\n");
+                response.Append("Para trabajar el pecho de forma efectiva en **MUSCLE HOUSE**, te recomiendo:\n\n");
+                response.Append("1. **Press de Banca con Barra**: El ejercicio rey para sobrecarga progresiva en empuje horizontal.\n");
+                response.Append("2. **Press Inclinado con Mancuernas**: Enfocado en la porción superior del pectoral.\n");
+                response.Append("3. **Fondos en Paralelas / Aperturas con Polea**: Excelentes para aislamiento y estiramiento en tensión constante.\n\n");
             }
-
-            // Generate specific tips according to objectives
-            response.Append("### 💡 Recomendaciones de IA\n");
-            if (context.Objetivo.Contains("Aumento", StringComparison.OrdinalIgnoreCase) || context.Objetivo.Contains("masa", StringComparison.OrdinalIgnoreCase) || context.Objetivo.Contains("Ganar", StringComparison.OrdinalIgnoreCase))
+            else if (trimmedMsg.Contains("pierna") || trimmedMsg.Contains("piernas") || trimmedMsg.Contains("cuádriceps"))
             {
-                response.Append("1. **Nutrición**: Asegúrate de estar en un superávit calórico controlado (300-500 kcal extra) y consumir suficiente proteína (aprox. 1.8g a 2.2g por kg).\n");
-                response.Append("2. **Entrenamiento**: Mantén la intensidad alta. Si puedes completar las series de tu rutina con el peso sugerido manteniendo una técnica perfecta, sube la carga un 2-5% en la siguiente sesión.\n");
-                response.Append("3. **Recuperación**: El músculo crece durante el descanso. Duerme entre 7 y 8 horas diarias de calidad.\n");
-            }
-            else if (context.Objetivo.Contains("Pérdida", StringComparison.OrdinalIgnoreCase) || context.Objetivo.Contains("bajar", StringComparison.OrdinalIgnoreCase) || context.Objetivo.Contains("Tonificación", StringComparison.OrdinalIgnoreCase))
-            {
-                response.Append("1. **Nutrición**: Prioriza un déficit calórico moderado de 300-500 kcal y mantén un consumo de proteína elevado para proteger la masa muscular magra.\n");
-                response.Append("2. **Entrenamiento**: No descuides el entrenamiento de fuerza pesada, complementando con actividad cardiovascular de baja intensidad (LISS) después de entrenar o rutinas tipo HIIT en días alternos.\n");
-                response.Append("3. **Consistencia**: Mantén un registro diario de tus comidas y sigue asistiendo regularmente a MUSCLE HOUSE.\n");
+                response.Append("Para el desarrollo de piernas en **MUSCLE HOUSE**, la frecuencia óptima suele ser de **2 veces por semana** (frecuencia 2) para maximizar la síntesis proteica muscular.\n\n");
+                response.Append("Ejercicios clave:\n");
+                response.Append("- **Sentadilla con Barra**: 3-4 series x 6-8 reps.\n");
+                response.Append("- **Prensa de Piernas / Prensa 45°**: 3 series x 10-12 reps.\n");
+                response.Append("- **Peso Muerto Rumano / Prensa Femoral**: Para la cadena posterior.\n\n");
             }
             else
             {
-                response.Append("1. **Equilibrio**: Enfócate en la regularidad de tus entrenamientos (mínimo 3-4 días por semana).\n");
-                response.Append("2. **Variedad**: Alterna sesiones de fuerza con movilidad y acondicionamiento cardiovascular.\n");
+                response.Append($"Analizando tu perfil para tu objetivo de **\"{context.Objetivo}\"**:\n\n");
+            }
+
+            // Append physical state context if relevant
+            if (context.PesoActual.HasValue && !isPureGreeting)
+            {
+                response.Append($"### 📊 Estado Físico & Progreso\n");
+                response.Append($"- **Peso**: {context.PesoActual.Value:F2} kg | **Medidas**: Pecho {context.Pecho ?? 0:F1} cm, Cintura {context.Cintura ?? 0:F1} cm, Brazo {context.Brazo ?? 0:F1} cm\n");
+                response.Append("\n");
+            }
+
+            // Append active routine context if available
+            if (!string.IsNullOrEmpty(context.NombreRutinaActiva) && context.EjerciciosRutina.Any())
+            {
+                response.Append($"### 🏋️ Rutina Activa: *{context.NombreRutinaActiva}*\n");
+                foreach (var re in context.EjerciciosRutina.Take(3))
+                {
+                    response.Append($"- **{re.NombreEjercicio}**: {re.Series}x{re.Repeticiones} @ {re.PesoRecomendado:F1} kg\n");
+                }
+                response.Append("\n");
+            }
+
+            // Specific tips
+            response.Append("### 💡 Recomendaciones de Entrenamiento\n");
+            if (context.Objetivo.Contains("Aumento", StringComparison.OrdinalIgnoreCase) || context.Objetivo.Contains("Ganar", StringComparison.OrdinalIgnoreCase))
+            {
+                response.Append("1. Mantén la intensidad alta en el rango de 6 a 12 repeticiones.\n");
+                response.Append("2. Aplica sobrecarga progresiva incrementando 1-2 kg cuando domines las repeticiones indicadas.\n");
+            }
+            else
+            {
+                response.Append("1. Mantén una alta densidad de entrenamiento y suficiente proteína en tu alimentación.\n");
+                response.Append("2. Descansa entre 60 y 90 segundos entre series pesadas.\n");
             }
 
             response.Append("\n---\n*⚠️ Nota: Estas recomendaciones son generadas automáticamente basándose en tus datos de MUSCLE HOUSE. No sustituyen el asesoramiento médico o nutricional profesional.*");
