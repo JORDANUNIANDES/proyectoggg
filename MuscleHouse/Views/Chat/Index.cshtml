@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Asistente Inteligente IA";
+}
+
+<div class="mb-4 text-center">
+    <h2 class="fw-bold text-orange"><i class="bi bi-robot text-yellow"></i> Asistente de IA — MUSCLE HOUSE</h2>
+    <p class="text-gray">Consulta consejos sobre alimentación, técnica de ejercicios, sobrecarga progresiva y rendimiento físico.</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card card-mh p-4">
+            <!-- Messages container -->
+            <div id="chatMessages" class="bg-dark p-3 rounded mb-4 overflow-y-auto" style="height: 400px; border: 1px solid var(--mh-dark-border);">
+                <div class="chat-message ai mb-3 p-3 rounded bg-dark-card border-start border-3 border-warning">
+                    <p class="m-0 fw-semibold text-yellow"><i class="bi bi-robot"></i> Asistente MUSCLE HOUSE</p>
+                    <p class="m-0 small text-light mt-1">¡Hola! Soy tu entrenador personal de IA. Estoy aquí para resolver tus dudas nutricionales y darte sugerencias sobre tu rutina activa de **MUSCLE HOUSE**. ¿En qué te puedo apoyar hoy?</p>
+                </div>
+            </div>
+
+            <!-- Loader spinner -->
+            <div id="chatLoader" class="text-center mb-3 d-none">
+                <div class="spinner-border text-orange" role="status">
+                    <span class="visually-hidden">Procesando...</span>
+                </div>
+                <p class="text-gray small m-0 mt-1">Analizando tus progresos y formulando respuesta...</p>
+            </div>
+
+            <!-- Input area -->
+            <div class="input-group">
+                <input type="text" id="userMessage" class="form-control form-control-mh py-2.5" placeholder="Pregúntame sobre tu peso, rutina de sentadillas..." />
+                @Html.AntiForgeryToken()
+                <button type="button" id="btnSend" class="btn btn-mh-orange px-4">
+                    Enviar <i class="bi bi-send-fill ms-1"></i>
+                </button>
+            </div>
+
+            <p class="text-gray small mt-3 m-0 italic text-center">
+                *⚠️ Nota: Las sugerencias de nuestra IA son exclusivamente informativas y de apoyo deportivo. No reemplazan la asesoría médica profesional o nutricional personalizada.*
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            function appendMessage(sender, text, isAi) {
+                var borderClass = isAi ? "border-start border-3 border-warning bg-dark-card" : "border-start border-3 border-info bg-opacity-10 bg-info";
+                var senderName = isAi ? "<i class='bi bi-robot'></i> Asistente MUSCLE HOUSE" : "<i class='bi bi-person-fill'></i> Tú";
+                var colorClass = isAi ? "text-yellow" : "text-orange";
+
+                var msgHtml = `
+                    <div class="chat-message mb-3 p-3 rounded ${borderClass}">
+                        <p class="m-0 fw-semibold ${colorClass}">${senderName}</p>
+                        <p class="m-0 small text-light mt-1">${text}</p>
+                    </div>
+                `;
+                $('#chatMessages').append(msgHtml);
+                $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+            }
+
+            $('#btnSend').click(function() {
+                sendMessage();
+            });
+
+            $('#userMessage').keypress(function(e) {
+                if (e.which == 13) {
+                    sendMessage();
+                }
+            });
+
+            function sendMessage() {
+                var message = $('#userMessage').val().trim();
+                if (message === '') return;
+
+                appendMessage("Tú", message, false);
+                $('#userMessage').val('');
+                $('#chatLoader').removeClass('d-none');
+                $('#btnSend').prop('disabled', true);
+
+                $.ajax({
+                    url: '/Chat/SendMessage',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    data: JSON.stringify({ message: message }),
+                    success: function(response) {
+                        $('#chatLoader').addClass('d-none');
+                        $('#btnSend').prop('disabled', false);
+                        appendMessage("Asistente", response.reply, true);
+                    },
+                    error: function(err) {
+                        $('#chatLoader').addClass('d-none');
+                        $('#btnSend').prop('disabled', false);
+                        appendMessage("Asistente", "⚠️ Error al procesar tu consulta en el servidor de IA de MUSCLE HOUSE. Intente nuevamente.", true);
+                    }
+                });
+            }
+        });
+    </script>
+}

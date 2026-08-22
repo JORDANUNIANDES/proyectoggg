@@ -1,0 +1,43 @@
+@model MuscleHouse.Models.Cliente
+@{
+    ViewData["Title"] = "Mi Perfil - MUSCLE HOUSE";
+}
+
+<div class="mb-4">
+    <h2><i class="bi bi-person-circle me-2"></i>Mi Perfil</h2>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card card-dark p-4">
+            <h5 class="text-warning mb-3">Datos Personales</h5>
+            <p><strong>Nombre Completo:</strong> @Model.Nombre @Model.Apellido</p>
+            <p><strong>Teléfono:</strong> @Model.Telefono</p>
+            <p><strong>Fecha de Nacimiento:</strong> @Model.FechaNacimiento.ToShortDateString()</p>
+            <p><strong>Objetivo Fitness:</strong> <span class="badge bg-secondary">@Model.Objetivo</span></p>
+            <p><strong>Estado:</strong> @(Model.Activo ? "Activo" : "Inactivo")</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-dark p-4">
+            <h5 class="text-warning mb-3">Mi Entrenador Asignado</h5>
+            @if (Model.Entrenador != null)
+            {
+                <div class="d-flex align-items-center mb-3">
+                    <img src="@(string.IsNullOrEmpty(Model.Entrenador.Fotografia) ? "/uploads/default-avatar.png" : Model.Entrenador.Fotografia)"
+                         class="rounded-circle me-3" width="60" height="60" style="object-fit: cover;" alt="Foto Entrenador" />
+                    <div>
+                        <h6 class="mb-0"><strong>@Model.Entrenador.Nombre @Model.Entrenador.Apellido</strong></h6>
+                        <small class="text-warning">@Model.Entrenador.Especialidad</small>
+                    </div>
+                </div>
+                <p><strong>Experiencia:</strong> @Model.Entrenador.Experiencia</p>
+                <p><small class="text-muted">@Model.Entrenador.Descripcion</small></p>
+            }
+            else
+            {
+                <p class="text-muted">Actualmente no tienes un entrenador personalizado asignado.</p>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+@model IEnumerable<MuscleHouse.Models.Notificacion>
+@{
+    ViewData["Title"] = "Notificaciones - MUSCLE HOUSE";
+}
+
+<div class="mb-4">
+    <h2><i class="bi bi-bell me-2"></i>Mis Notificaciones</h2>
+</div>
+
+<div class="card card-dark p-3">
+    @if (!Model.Any())
+    {
+        <p class="text-muted mb-0">No tienes notificaciones en este momento.</p>
+    }
+    else
+    {
+        <div class="list-group list-group-flush">
+            @foreach (var n in Model)
+            {
+                <div class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1 text-warning"><strong>@n.Titulo</strong></h6>
+                        <p class="mb-1">@n.Mensaje</p>
+                        <small class="text-muted">@n.Fecha.ToString("g")</small>
+                    </div>
+                    @if (!n.Leida)
+                    {
+                        <span class="badge bg-danger">Nueva</span>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>

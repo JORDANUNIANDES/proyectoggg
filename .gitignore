@@ -1,0 +1,17 @@
+# Visual Studio / .NET build outputs
+bin/
+obj/
+**/bin/
+**/obj/
+out/
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore test results and coverage
+TestResults/
+*.coverage
+
+# Logs
+*.log

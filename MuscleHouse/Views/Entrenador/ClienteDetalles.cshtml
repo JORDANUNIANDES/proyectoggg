@@ -1,0 +1,140 @@
+@model MuscleHouse.Models.Cliente
+@{
+    ViewData["Title"] = $"Perfil de {Model.Nombre} {Model.Apellido}";
+    var rutinas = ViewBag.Rutinas as IEnumerable<MuscleHouse.Models.Rutina> ?? new List<MuscleHouse.Models.Rutina>();
+    var progresos = ViewBag.Progresos as IEnumerable<MuscleHouse.Models.Progreso> ?? new List<MuscleHouse.Models.Progreso>();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person-lines-fill me-2"></i>Perfil de @Model.Nombre @Model.Apellido</h2>
+    <div>
+        <a asp-action="CrearRutina" asp-route-clienteId="@Model.Id" class="btn btn-muscle me-2">
+            <i class="bi bi-plus-lg me-1"></i>Crear Rutina
+        </a>
+        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#progresoModal">
+            <i class="bi bi-speedometer2 me-1"></i>Registrar Medidas
+        </button>
+    </div>
+</div>
+
+<!-- Modal Registrar Progreso -->
+<div class="modal fade" id="progresoModal" tabindex="-1" aria-labelledby="progresoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="progresoModalLabel"><i class="bi bi-activity me-2 text-warning"></i>Registrar Progreso Físico</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="RegistrarProgreso" method="post">
+                <input type="hidden" name="clienteId" value="@Model.Id" />
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Peso (kg)</label>
+                            <input type="number" step="0.1" name="peso" class="form-control form-control-dark" required />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Pecho (cm)</label>
+                            <input type="number" step="0.1" name="pecho" class="form-control form-control-dark" />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Cintura (cm)</label>
+                            <input type="number" step="0.1" name="cintura" class="form-control form-control-dark" />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Brazo (cm)</label>
+                            <input type="number" step="0.1" name="brazo" class="form-control form-control-dark" />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Pierna (cm)</label>
+                            <input type="number" step="0.1" name="pierna" class="form-control form-control-dark" />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Cadera (cm)</label>
+                            <input type="number" step="0.1" name="cadera" class="form-control form-control-dark" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observaciones</label>
+                        <textarea name="observaciones" class="form-control form-control-dark" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-muscle">Guardar Medidas</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card card-dark h-100 p-3">
+            <h5 class="text-warning mb-3">Información del Cliente</h5>
+            <p><strong>Teléfono:</strong> @Model.Telefono</p>
+            <p><strong>Fecha Nacimiento:</strong> @Model.FechaNacimiento.ToShortDateString()</p>
+            <p><strong>Objetivo:</strong> <span class="badge bg-secondary">@Model.Objetivo</span></p>
+            <p><strong>Estado:</strong> @(Model.Activo ? "Activo" : "Inactivo")</p>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card card-dark h-100 p-3">
+            <h5 class="text-warning mb-3">Rutinas Asignadas</h5>
+            @if (!rutinas.Any())
+            {
+                <p class="text-muted">Este cliente aún no tiene rutinas asignadas.</p>
+            }
+            else
+            {
+                <div class="list-group">
+                    @foreach (var r in rutinas)
+                    {
+                        <div class="list-group-item bg-dark text-white border-secondary mb-2 rounded">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6><strong>@r.Nombre</strong></h6>
+                                <span class="badge bg-secondary">@r.FechaCreacion.ToShortDateString()</span>
+                            </div>
+                            <small class="text-muted">Ejercicios incluidos: @r.RutinaEjercicios?.Count</small>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card card-dark p-3">
+    <h5 class="text-warning mb-3">Historial de Progreso Físico</h5>
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Peso (kg)</th>
+                    <th>Pecho (cm)</th>
+                    <th>Cintura (cm)</th>
+                    <th>Brazo (cm)</th>
+                    <th>Pierna (cm)</th>
+                    <th>Cadera (cm)</th>
+                    <th>Observaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in progresos)
+                {
+                    <tr>
+                        <td>@p.Fecha.ToShortDateString()</td>
+                        <td><strong>@p.Peso kg</strong></td>
+                        <td>@p.Pecho cm</td>
+                        <td>@p.Cintura cm</td>
+                        <td>@p.Brazo cm</td>
+                        <td>@p.Pierna cm</td>
+                        <td>@p.Cadera cm</td>
+                        <td><small class="text-muted">@p.Observaciones</small></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

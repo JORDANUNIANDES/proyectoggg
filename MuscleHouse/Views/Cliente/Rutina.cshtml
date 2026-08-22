@@ -1,0 +1,71 @@
+@model MuscleHouse.Models.Rutina
+@{
+    ViewData["Title"] = "Mi Rutina Actual - MUSCLE HOUSE";
+}
+
+<div class="mb-4">
+    <h2><i class="bi bi-journal-text me-2"></i>Mi Rutina de Entrenamiento</h2>
+</div>
+
+@if (Model == null)
+{
+    <div class="alert bg-dark text-warning border-warning">
+        <i class="bi bi-info-circle me-2"></i>Aún no tienes una rutina activa asignada. Tu entrenador configurará tu plan de entrenamiento pronto.
+    </div>
+}
+else
+{
+    <div class="card card-dark p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-warning mb-0">@Model.Nombre</h4>
+            <span class="badge bg-secondary">Creada el @Model.FechaCreacion.ToShortDateString()</span>
+        </div>
+        <p class="text-muted">Entrenador: @(Model.Entrenador != null ? $"{Model.Entrenador.Nombre} {Model.Entrenador.Apellido}" : "Gimnasio MUSCLE HOUSE")</p>
+    </div>
+
+    <div class="row g-4">
+        @if (Model.RutinaEjercicios != null)
+        {
+            @foreach (var item in Model.RutinaEjercicios.OrderBy(e => e.Orden))
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card card-dark h-100 p-3 border-secondary">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="text-white mb-0">#@item.Orden @(item.Ejercicio?.Nombre ?? "Ejercicio")</h5>
+                            <span class="badge bg-secondary">@(item.Ejercicio?.GrupoMuscular)</span>
+                        </div>
+                        <p class="text-muted small mb-3">@(item.Ejercicio?.Descripcion)</p>
+
+                        <div class="bg-dark p-2 rounded mb-2 text-center">
+                            <div class="row g-1">
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Series</small>
+                                    <strong class="text-warning fs-5">@item.Series</strong>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Reps</small>
+                                    <strong class="text-warning fs-5">@item.Repeticiones</strong>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Peso</small>
+                                    <strong class="text-warning fs-5">@item.PesoRecomendado kg</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center text-muted small">
+                            <span><i class="bi bi-stopwatch me-1"></i>Descanso: @item.DescansoSegundos seg</span>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(item.Observaciones))
+                        {
+                            <div class="mt-2 pt-2 border-top border-secondary small text-warning">
+                                <i class="bi bi-info-circle me-1"></i>@item.Observaciones
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}

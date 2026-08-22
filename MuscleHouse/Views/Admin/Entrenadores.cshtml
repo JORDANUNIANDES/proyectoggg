@@ -1,0 +1,57 @@
+@model IEnumerable<MuscleHouse.Models.Entrenador>
+@{
+    ViewData["Title"] = "Gestión de Entrenadores - Admin";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person-badge me-2"></i>Gestión de Entrenadores</h2>
+    <a asp-action="CrearEntrenador" class="btn btn-muscle">
+        <i class="bi bi-plus-lg me-1"></i>Nuevo Entrenador
+    </a>
+</div>
+
+<div class="card card-dark p-3">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Nombre Completo</th>
+                    <th>Especialidad</th>
+                    <th>Experiencia</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@(string.IsNullOrEmpty(e.Fotografia) ? "/uploads/default-avatar.png" : e.Fotografia)"
+                                 class="rounded-circle" width="40" height="40" style="object-fit: cover;" alt="Foto" />
+                        </td>
+                        <td><strong>@e.Nombre @e.Apellido</strong></td>
+                        <td><span class="badge bg-secondary">@e.Especialidad</span></td>
+                        <td>@e.Experiencia</td>
+                        <td>
+                            @if (e.Activo)
+                            {
+                                <span class="badge bg-success">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Inactivo</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="EditarEntrenador" asp-route-id="@e.Id" class="btn btn-sm btn-outline-warning me-1">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

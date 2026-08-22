@@ -1,0 +1,133 @@
+@model IEnumerable<MuscleHouse.Models.Membresia>
+@{
+    ViewData["Title"] = "Consulta de Membresías - Admin";
+    string search = ViewBag.Search as string ?? "";
+    string estado = ViewBag.Estado as string ?? "";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalItems = ViewBag.TotalItems ?? 0;
+    int pageSize = ViewBag.PageSize ?? 10;
+    int startItem = totalItems == 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+    int endItem = Math.Min(currentPage * pageSize, totalItems);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-card-heading me-2"></i>Historial de Membresías</h2>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="card card-dark p-3 mb-4">
+    <form method="get" asp-action="Membresias" class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="search" value="@search" class="form-control form-control-dark" placeholder="Buscar por cliente o plan..." />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select name="estado" class="form-select form-control-dark">
+                <option value="">-- Todos los Estados --</option>
+                @if (estado == "Activa")
+                {
+                    <option value="Activa" selected="selected">Activa</option>
+                }
+                else
+                {
+                    <option value="Activa">Activa</option>
+                }
+                @if (estado == "Vencida")
+                {
+                    <option value="Vencida" selected="selected">Vencida</option>
+                }
+                else
+                {
+                    <option value="Vencida">Vencida</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-muscle flex-grow-1">
+                <i class="bi bi-search me-1"></i>Buscar
+            </button>
+            <a asp-action="Membresias" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Limpiar
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="card card-dark p-3">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Plan</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Vencimiento</th>
+                    <th>Precio Pagado</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">No se encontraron membresías que coincidan con la búsqueda.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var m in Model)
+                    {
+                        <tr>
+                            <td><strong>@(m.Cliente != null ? $"{m.Cliente.Nombre} {m.Cliente.Apellido}" : $"Cliente #{m.ClienteId}")</strong></td>
+                            <td>@(m.Plan != null ? m.Plan.Nombre : "N/A")</td>
+                            <td>@m.FechaInicio.ToString("dd/MM/yyyy")</td>
+                            <td>@m.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                            <td>$@m.PrecioPagado.ToString("F2")</td>
+                            <td>
+                                @if (m.Estado == "Activa")
+                                {
+                                    <span class="badge bg-success">Activa</span>
+                                }
+                                else if (m.Estado == "Vencida")
+                                {
+                                    <span class="badge bg-danger">Vencida</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@m.Estado</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    @if (totalPages > 1)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+            <small class="text-muted">Mostrando @startItem-@endItem de @totalItems registros</small>
+            <nav aria-label="Navegación de páginas">
+                <ul class="pagination pagination-sm m-0">
+                    <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link bg-dark text-light border-secondary" asp-action="Membresias" asp-route-search="@search" asp-route-estado="@estado" asp-route-page="@(currentPage - 1)">Anterior</a>
+                    </li>
+                    @for (int p = 1; p <= totalPages; p++)
+                    {
+                        <li class="page-item @(p == currentPage ? "active" : "")">
+                            <a class="page-link @(p == currentPage ? "bg-danger border-danger text-white" : "bg-dark text-light border-secondary")" asp-action="Membresias" asp-route-search="@search" asp-route-estado="@estado" asp-route-page="@p">@p</a>
+                        </li>
+                    }
+                    <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                        <a class="page-link bg-dark text-light border-secondary" asp-action="Membresias" asp-route-search="@search" asp-route-estado="@estado" asp-route-page="@(currentPage + 1)">Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>

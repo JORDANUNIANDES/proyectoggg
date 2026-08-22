@@ -1,0 +1,322 @@
+/* MUSCLE HOUSE Global Unified Brand Theme & High-Contrast Style System */
+
+:root {
+    /* Base Backgrounds & Surfaces */
+    --mh-bg: #090909;
+    --mh-surface: #101112;
+    --mh-card: #17191B;
+    --mh-card-elevated: #1D2023;
+    --mh-border: #2A2D30;
+
+    /* Primary Identity Accent - MUSCLE HOUSE Red */
+    --mh-red: #E31C25;
+    --mh-red-hover: #FF3038;
+    --mh-red-dark: #A81219;
+
+    /* High-Contrast Typography Hierarchy */
+    --mh-text: #F5F5F5;
+    --mh-text-secondary: #D0D3D6;
+    --mh-text-muted: #9EA3A8;
+
+    /* Semantic Status Indicators */
+    --mh-success: #35C759;
+    --mh-warning: #FFB020;
+    --mh-info: #4DA3FF;
+}
+
+body {
+    background-color: var(--mh-bg) !important;
+    color: var(--mh-text) !important;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Typography Hierarchy */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: var(--mh-text) !important;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+p, span, li, label, td, th, div {
+    color: var(--mh-text-secondary);
+}
+
+strong, b, .text-highlight {
+    color: var(--mh-text) !important;
+}
+
+.text-muted, small.text-muted {
+    color: var(--mh-text-muted) !important;
+}
+
+a {
+    color: var(--mh-red);
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+    color: var(--mh-red-hover);
+}
+
+/* Layout Containers & Sidebar */
+.sidebar {
+    background-color: var(--mh-surface) !important;
+    border-right: 1px solid var(--mh-border) !important;
+}
+
+.sidebar .nav-link {
+    color: var(--mh-text-secondary) !important;
+    border-radius: 6px;
+    padding: 10px 16px;
+    margin-bottom: 4px;
+    transition: all 0.2s ease;
+}
+
+.sidebar .nav-link:hover {
+    background-color: var(--mh-card-elevated) !important;
+    color: var(--mh-text) !important;
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--mh-red) !important;
+    color: #FFFFFF !important;
+    font-weight: 600;
+}
+
+/* Cards & Elevated Surfaces */
+.card, .card-dark {
+    background-color: var(--mh-card) !important;
+    border: 1px solid var(--mh-border) !important;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    color: var(--mh-text) !important;
+}
+
+.card-elevated, .card-highlight {
+    background: linear-gradient(135deg, var(--mh-card-elevated) 0%, var(--mh-card) 100%) !important;
+    border: 1px solid var(--mh-border) !important;
+}
+
+/* Buttons & Interactive Elements */
+.btn-muscle, .btn-primary {
+    background-color: var(--mh-red) !important;
+    border-color: var(--mh-red) !important;
+    color: #FFFFFF !important;
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-muscle:hover, .btn-primary:hover {
+    background-color: var(--mh-red-hover) !important;
+    border-color: var(--mh-red-hover) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 10px rgba(227, 28, 37, 0.4);
+}
+
+.btn-secondary, .btn-outline-secondary {
+    background-color: var(--mh-card-elevated) !important;
+    border-color: var(--mh-border) !important;
+    color: var(--mh-text) !important;
+}
+
+.btn-secondary:hover, .btn-outline-secondary:hover {
+    background-color: var(--mh-border) !important;
+    color: var(--mh-text) !important;
+}
+
+/* Tables & Data Grids */
+.table, .table-dark {
+    --bs-table-bg: var(--mh-card);
+    --bs-table-color: var(--mh-text);
+    --bs-table-border-color: var(--mh-border);
+    --bs-table-hover-bg: var(--mh-card-elevated);
+    --bs-table-hover-color: var(--mh-text);
+    border-color: var(--mh-border) !important;
+}
+
+.table thead th {
+    background-color: var(--mh-card-elevated) !important;
+    color: var(--mh-text) !important;
+    border-bottom: 2px solid var(--mh-border) !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+}
+
+.table tbody tr {
+    background-color: var(--mh-card) !important;
+    color: var(--mh-text) !important;
+}
+
+.table tbody td {
+    color: var(--mh-text-secondary) !important;
+    border-color: var(--mh-border) !important;
+}
+
+.table tbody td strong, .table tbody td b {
+    color: var(--mh-text) !important;
+}
+
+/* Forms, Inputs, Date/Time Pickers */
+.form-control, .form-select, input, select, textarea {
+    background-color: var(--mh-surface) !important;
+    border: 1px solid var(--mh-border) !important;
+    color: var(--mh-text) !important;
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
+.form-control:focus, .form-select:focus, input:focus, select:focus, textarea:focus {
+    background-color: var(--mh-surface) !important;
+    border-color: var(--mh-red) !important;
+    color: var(--mh-text) !important;
+    box-shadow: 0 0 0 0.2rem rgba(227, 28, 37, 0.25) !important;
+}
+
+/* Custom Dark Checkboxes - Proportional & Aligned */
+.form-check {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding-left: 0 !important;
+    margin-bottom: 0 !important;
+    cursor: pointer;
+}
+
+.form-check-input {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    min-height: 16px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: var(--mh-surface) !important;
+    border: 1.5px solid var(--mh-border) !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease-in-out !important;
+    float: none !important;
+    vertical-align: middle !important;
+    box-shadow: none !important;
+}
+
+.form-check-input:checked {
+    background-color: var(--mh-red) !important;
+    border-color: var(--mh-red) !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m4 8 2.5 2.5 5.5-5.5'/%3e%3c/svg%3e") !important;
+}
+
+.form-check-input:focus {
+    border-color: var(--mh-red) !important;
+    box-shadow: 0 0 0 0.2rem rgba(227, 28, 37, 0.25) !important;
+}
+
+.form-check-label {
+    color: var(--mh-text-secondary) !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+}
+
+::placeholder {
+    color: var(--mh-text-muted) !important;
+    opacity: 1 !important;
+}
+
+input[type="date"], input[type="time"], input[type="number"] {
+    color-scheme: dark !important;
+}
+
+.form-label, label {
+    color: var(--mh-text) !important;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* Badges & Status Pills */
+.badge {
+    padding: 6px 10px;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+.badge.bg-success {
+    background-color: rgba(53, 199, 89, 0.2) !important;
+    color: var(--mh-success) !important;
+    border: 1px solid var(--mh-success);
+}
+
+.badge.bg-warning {
+    background-color: rgba(255, 176, 32, 0.2) !important;
+    color: var(--mh-warning) !important;
+    border: 1px solid var(--mh-warning);
+}
+
+.badge.bg-danger {
+    background-color: rgba(227, 28, 37, 0.2) !important;
+    color: var(--mh-red) !important;
+    border: 1px solid var(--mh-red);
+}
+
+.badge.bg-info {
+    background-color: rgba(77, 163, 255, 0.2) !important;
+    color: var(--mh-info) !important;
+    border: 1px solid var(--mh-info);
+}
+
+.badge.bg-secondary {
+    background-color: var(--mh-card-elevated) !important;
+    color: var(--mh-text-secondary) !important;
+    border: 1px solid var(--mh-border);
+}
+
+/* Modals & Popups */
+.modal-content {
+    background-color: var(--mh-card) !important;
+    border: 1px solid var(--mh-border) !important;
+    color: var(--mh-text) !important;
+}
+
+.modal-header, .modal-footer {
+    border-color: var(--mh-border) !important;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 6px;
+    border: 1px solid transparent;
+}
+
+.alert-success {
+    background-color: rgba(53, 199, 89, 0.15) !important;
+    border-color: var(--mh-success) !important;
+    color: var(--mh-text) !important;
+}
+
+.alert-danger {
+    background-color: rgba(227, 28, 37, 0.15) !important;
+    border-color: var(--mh-red) !important;
+    color: var(--mh-text) !important;
+}
+
+.alert-warning {
+    background-color: rgba(255, 176, 32, 0.15) !important;
+    border-color: var(--mh-warning) !important;
+    color: var(--mh-text) !important;
+}
+
+.alert-info {
+    background-color: rgba(77, 163, 255, 0.15) !important;
+    border-color: var(--mh-info) !important;
+    color: var(--mh-text) !important;
+}

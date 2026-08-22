@@ -1,0 +1,106 @@
+/* Custom Dark Components for MUSCLE HOUSE */
+
+.card-mh, .card-dark {
+    background-color: var(--mh-card) !important;
+    border: 1px solid var(--mh-border) !important;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.card-mh:hover, .card-dark:hover {
+    border-color: var(--mh-border) !important;
+}
+
+.card-mh-header {
+    background-color: var(--mh-card-elevated);
+    border-bottom: 1px solid var(--mh-border);
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+    color: var(--mh-text);
+}
+
+/* Custom Buttons */
+.btn-mh-orange, .btn-mh-red, .btn-muscle {
+    background-color: var(--mh-red) !important;
+    color: #FFFFFF !important;
+    font-weight: 600;
+    border: 1px solid var(--mh-red) !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-mh-orange:hover, .btn-mh-red:hover, .btn-muscle:hover {
+    background-color: var(--mh-red-hover) !important;
+    border-color: var(--mh-red-hover) !important;
+    color: #FFFFFF !important;
+}
+
+.btn-mh-yellow, .btn-mh-secondary {
+    background-color: var(--mh-card-elevated) !important;
+    color: var(--mh-text) !important;
+    font-weight: 600;
+    border: 1px solid var(--mh-border) !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-mh-yellow:hover, .btn-mh-secondary:hover {
+    background-color: var(--mh-border) !important;
+    color: var(--mh-text) !important;
+}
+
+/* Dark themed Forms */
+.form-control-mh, .form-control-dark {
+    background-color: var(--mh-surface) !important;
+    border: 1px solid var(--mh-border) !important;
+    color: var(--mh-text) !important;
+    border-radius: 6px;
+}
+
+.form-control-mh:focus, .form-control-dark:focus {
+    background-color: var(--mh-surface) !important;
+    border-color: var(--mh-red) !important;
+    color: var(--mh-text) !important;
+    box-shadow: 0 0 0 0.25rem rgba(227, 28, 37, 0.25) !important;
+}
+
+/* Dark responsive tables */
+.table-mh {
+    color: var(--mh-text);
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-mh th {
+    background-color: var(--mh-card-elevated);
+    color: var(--mh-text);
+    font-weight: 700;
+    border-bottom: 2px solid var(--mh-border);
+    padding: 1rem;
+}
+
+.table-mh td {
+    background-color: var(--mh-card);
+    border-bottom: 1px solid var(--mh-border);
+    padding: 1rem;
+    color: var(--mh-text-secondary);
+}
+
+.table-mh tr:hover td {
+    background-color: var(--mh-card-elevated);
+    color: var(--mh-text);
+}
+
+/* Alert notifications */
+.alert-mh-success {
+    background-color: rgba(53, 199, 89, 0.15) !important;
+    border: 1px solid var(--mh-success) !important;
+    color: var(--mh-text) !important;
+}
+
+.alert-mh-error {
+    background-color: rgba(227, 28, 37, 0.15) !important;
+    border: 1px solid var(--mh-red) !important;
+    color: var(--mh-text) !important;
+}
