@@ -1,0 +1,17 @@
+bin/
+**/bin/
+obj/
+**/obj/
+*.user
+*.userosscache
+*.sln.docstates
+
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.angular/
+**/.angular/
+.vscode/
+.idea/
+*.log
