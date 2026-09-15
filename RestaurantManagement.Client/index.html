@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Restaurantes</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-utensils"></i>
+                <h2>RestoGestión</h2>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-view="dashboard">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard
+                </button>
+                <button class="nav-btn" data-view="clientes">
+                    <i class="fa-solid fa-users"></i> Clientes
+                </button>
+                <button class="nav-btn" data-view="platos">
+                    <i class="fa-solid fa-bowl-food"></i> Platos
+                </button>
+                <button class="nav-btn" data-view="mesas">
+                    <i class="fa-solid fa-chair"></i> Mesas
+                </button>
+                <button class="nav-btn" data-view="pedidos">
+                    <i class="fa-solid fa-receipt"></i> Pedidos
+                </button>
+                <button class="nav-btn" data-view="reportes">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Reportes
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Proyecto Académico &copy; 2026</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="topbar">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="user-info">
+                    <span class="badge badge-info">Académico</span>
+                </div>
+            </header>
+
+            <div id="alert-container"></div>
+
+            <!-- View: Dashboard -->
+            <section id="view-dashboard" class="view-section active">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="icon-wrapper bg-blue"><i class="fa-solid fa-users"></i></div>
+                        <div class="metric-data">
+                            <h3>Clientes</h3>
+                            <p id="dash-clientes">0</p>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="icon-wrapper bg-green"><i class="fa-solid fa-bowl-food"></i></div>
+                        <div class="metric-data">
+                            <h3>Platos Disponibles</h3>
+                            <p id="dash-platos">0</p>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="icon-wrapper bg-orange"><i class="fa-solid fa-chair"></i></div>
+                        <div class="metric-data">
+                            <h3>Mesas</h3>
+                            <p id="dash-mesas">0</p>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="icon-wrapper bg-purple"><i class="fa-solid fa-receipt"></i></div>
+                        <div class="metric-data">
+                            <h3>Pedidos Totales</h3>
+                            <p id="dash-pedidos">0</p>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="icon-wrapper bg-yellow"><i class="fa-solid fa-clock"></i></div>
+                        <div class="metric-data">
+                            <h3>Pedidos Pendientes</h3>
+                            <p id="dash-pendientes">0</p>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="icon-wrapper bg-teal"><i class="fa-solid fa-dollar-sign"></i></div>
+                        <div class="metric-data">
+                            <h3>Ventas Totales</h3>
+                            <p id="dash-ventas">$0.00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-clock-rotate-left"></i> Últimos Pedidos Registrados</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table" id="table-dashboard-pedidos">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Cliente</th>
+                                        <th>Mesa</th>
+                                        <th>Fecha</th>
+                                        <th>Estado</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Clientes -->
+            <section id="view-clientes" class="view-section">
+                <div class="action-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="search-cliente" placeholder="Buscar cliente por nombre o cédula...">
+                    </div>
+                    <button class="btn btn-primary" onclick="openClienteModal()">
+                        <i class="fa-solid fa-plus"></i> Nuevo Cliente
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table" id="table-clientes">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre Completo</th>
+                                        <th>Cédula</th>
+                                        <th>Teléfono</th>
+                                        <th>Email</th>
+                                        <th>Dirección</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Platos -->
+            <section id="view-platos" class="view-section">
+                <div class="action-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="search-plato" placeholder="Buscar plato por nombre o categoría...">
+                    </div>
+                    <button class="btn btn-primary" onclick="openPlatoModal()">
+                        <i class="fa-solid fa-plus"></i> Nuevo Plato
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table" id="table-platos">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Categoría</th>
+                                        <th>Precio</th>
+                                        <th>Descripción</th>
+                                        <th>Disponible</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Mesas -->
+            <section id="view-mesas" class="view-section">
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="openMesaModal()">
+                        <i class="fa-solid fa-plus"></i> Nueva Mesa
+                    </button>
+                </div>
+
+                <div class="mesas-grid" id="mesas-cards-container"></div>
+            </section>
+
+            <!-- View: Pedidos -->
+            <section id="view-pedidos" class="view-section">
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="openNuevoPedidoModal()">
+                        <i class="fa-solid fa-cart-plus"></i> Registrar Nuevo Pedido
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table" id="table-pedidos">
+                                <thead>
+                                    <tr>
+                                        <th>ID Pedido</th>
+                                        <th>Cliente</th>
+                                        <th>Mesa</th>
+                                        <th>Fecha</th>
+                                        <th>Estado</th>
+                                        <th>Total</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Reportes -->
+            <section id="view-reportes" class="view-section">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-filter"></i> Generar Reporte de Pedidos por Cliente</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-8">
+                                <label for="select-reporte-cliente">Seleccionar Cliente</label>
+                                <select id="select-reporte-cliente" class="form-control"></select>
+                            </div>
+                            <div class="form-group col-4 align-end">
+                                <button class="btn btn-success w-100" onclick="generarReporteCliente()">
+                                    <i class="fa-solid fa-chart-bar"></i> Consultar Reporte
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="reporte-resultado-container" style="display: none;">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="icon-wrapper bg-blue"><i class="fa-solid fa-user"></i></div>
+                            <div class="metric-data">
+                                <h3>Cliente</h3>
+                                <p id="rep-cliente-nombre">-</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="icon-wrapper bg-purple"><i class="fa-solid fa-id-card"></i></div>
+                            <div class="metric-data">
+                                <h3>Cédula</h3>
+                                <p id="rep-cliente-cedula">-</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="icon-wrapper bg-orange"><i class="fa-solid fa-shopping-bag"></i></div>
+                            <div class="metric-data">
+                                <h3>Total Pedidos</h3>
+                                <p id="rep-cant-pedidos">0</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="icon-wrapper bg-teal"><i class="fa-solid fa-wallet"></i></div>
+                            <div class="metric-data">
+                                <h3>Total Gastado</h3>
+                                <p id="rep-total-gastado">$0.00</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-list-check"></i> Historial de Pedidos del Cliente</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table" id="table-reporte-pedidos">
+                                    <thead>
+                                        <tr>
+                                            <th>ID Pedido</th>
+                                            <th>Fecha</th>
+                                            <th>Mesa</th>
+                                            <th>Estado</th>
+                                            <th>Detalle de Platos</th>
+                                            <th>Total Pedido</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal: Cliente Form -->
+    <div class="modal" id="modal-cliente">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-cliente-title">Nuevo Cliente</h3>
+                <button class="close-btn" onclick="closeModal('modal-cliente')">&times;</button>
+            </div>
+            <form id="form-cliente" onsubmit="saveCliente(event)">
+                <input type="hidden" id="cliente-id">
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="cliente-nombre">Nombre *</label>
+                        <input type="text" id="cliente-nombre" class="form-control" required>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="cliente-apellido">Apellido *</label>
+                        <input type="text" id="cliente-apellido" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="cliente-cedula">Cédula Ecuatoriana (10 dígitos) *</label>
+                        <input type="text" id="cliente-cedula" class="form-control" maxlength="10" required>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="cliente-telefono">Teléfono</label>
+                        <input type="text" id="cliente-telefono" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cliente-email">Email</label>
+                    <input type="email" id="cliente-email" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="cliente-direccion">Dirección</label>
+                    <input type="text" id="cliente-direccion" class="form-control">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-cliente')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Plato Form -->
+    <div class="modal" id="modal-plato">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-plato-title">Nuevo Plato</h3>
+                <button class="close-btn" onclick="closeModal('modal-plato')">&times;</button>
+            </div>
+            <form id="form-plato" onsubmit="savePlato(event)">
+                <input type="hidden" id="plato-id">
+                <div class="form-group">
+                    <label for="plato-nombre">Nombre del Plato *</label>
+                    <input type="text" id="plato-nombre" class="form-control" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="plato-precio">Precio ($) *</label>
+                        <input type="number" id="plato-precio" class="form-control" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="plato-categoria">Categoría *</label>
+                        <select id="plato-categoria" class="form-control" required>
+                            <option value="Platos Fuertes">Platos Fuertes</option>
+                            <option value="Entradas">Entradas</option>
+                            <option value="Sopas">Sopas</option>
+                            <option value="Mariscos">Mariscos</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Postres">Postres</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="plato-descripcion">Descripción</label>
+                    <textarea id="plato-descripcion" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="plato-disponible" checked> Disponible para pedidos</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-plato')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Mesa Form -->
+    <div class="modal" id="modal-mesa">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-mesa-title">Nueva Mesa</h3>
+                <button class="close-btn" onclick="closeModal('modal-mesa')">&times;</button>
+            </div>
+            <form id="form-mesa" onsubmit="saveMesa(event)">
+                <input type="hidden" id="mesa-id">
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="mesa-numero">Número de Mesa *</label>
+                        <input type="number" id="mesa-numero" class="form-control" min="1" required>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="mesa-capacidad">Capacidad (personas) *</label>
+                        <input type="number" id="mesa-capacidad" class="form-control" min="1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="mesa-ubicacion">Ubicación</label>
+                    <input type="text" id="mesa-ubicacion" class="form-control" placeholder="Ej: Terraza, VIP, Salón Principal">
+                </div>
+                <div class="form-group">
+                    <label for="mesa-estado">Estado</label>
+                    <select id="mesa-estado" class="form-control">
+                        <option value="Disponible">Disponible</option>
+                        <option value="Ocupada">Ocupada</option>
+                        <option value="Reservada">Reservada</option>
+                        <option value="Mantenimiento">Mantenimiento</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-mesa')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Nuevo Pedido -->
+    <div class="modal" id="modal-pedido">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>Registrar Nuevo Pedido</h3>
+                <button class="close-btn" onclick="closeModal('modal-pedido')">&times;</button>
+            </div>
+            <form id="form-pedido" onsubmit="savePedido(event)">
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="pedido-cliente">Cliente *</label>
+                        <select id="pedido-cliente" class="form-control" required></select>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="pedido-mesa">Mesa (Opcional)</label>
+                        <select id="pedido-mesa" class="form-control"></select>
+                    </div>
+                </div>
+
+                <div class="order-items-builder mt-3">
+                    <h4><i class="fa-solid fa-list"></i> Agregar Platos al Pedido</h4>
+                    <div class="form-row align-end">
+                        <div class="form-group col-7">
+                            <label for="select-plato-item">Plato Disponible</label>
+                            <select id="select-plato-item" class="form-control"></select>
+                        </div>
+                        <div class="form-group col-3">
+                            <label for="input-cantidad-item">Cantidad</label>
+                            <input type="number" id="input-cantidad-item" class="form-control" min="1" value="1">
+                        </div>
+                        <div class="form-group col-2">
+                            <button type="button" class="btn btn-success w-100" onclick="agregarItemPedido()">
+                                <i class="fa-solid fa-plus"></i> Añadir
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive mt-3">
+                        <table class="table" id="table-pedido-items">
+                            <thead>
+                                <tr>
+                                    <th>Plato</th>
+                                    <th>Precio Unit.</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <div class="order-summary mt-3">
+                        <div class="summary-line">
+                            <span>Subtotal:</span>
+                            <span id="pedido-summary-subtotal">$0.00</span>
+                        </div>
+                        <div class="summary-line total-line">
+                            <span>Total Calculado:</span>
+                            <span id="pedido-summary-total">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mt-3">
+                    <label for="pedido-observaciones">Observaciones</label>
+                    <textarea id="pedido-observaciones" class="form-control" rows="2" placeholder="Ej: Sin sal, salsa aparte..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-pedido')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Pedido</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Detalle / Cambiar Estado Pedido -->
+    <div class="modal" id="modal-detalle-pedido">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="detalle-pedido-title">Detalle del Pedido #</h3>
+                <button class="close-btn" onclick="closeModal('modal-detalle-pedido')">&times;</button>
+            </div>
+            <div id="detalle-pedido-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modal-detalle-pedido')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
