@@ -1,0 +1,7 @@
+**/bin/
+**/obj/
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+.DS_Store

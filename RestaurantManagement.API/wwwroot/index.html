@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Gestión de Restaurante</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">R</div>
+        <div>
+          <div class="brand-title">GastroControl</div>
+          <div class="brand-subtitle">Gestión de Restaurante</div>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item active" data-view="dashboard">
+          <button type="button">
+            <span class="icon">📊</span>
+            <span>Dashboard</span>
+          </button>
+        </li>
+        <li class="nav-item" data-view="clientes">
+          <button type="button">
+            <span class="icon">👥</span>
+            <span>Clientes</span>
+          </button>
+        </li>
+        <li class="nav-item" data-view="platos">
+          <button type="button">
+            <span class="icon">🍽️</span>
+            <span>Platos y Menú</span>
+          </button>
+        </li>
+        <li class="nav-item" data-view="mesas">
+          <button type="button">
+            <span class="icon">🪑</span>
+            <span>Mesas</span>
+          </button>
+        </li>
+        <li class="nav-item" data-view="pedidos">
+          <button type="button">
+            <span class="icon">📝</span>
+            <span>Pedidos</span>
+          </button>
+        </li>
+        <li class="nav-item" data-view="reportes">
+          <button type="button">
+            <span class="icon">📈</span>
+            <span>Reportes por Cliente</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div>Sistema Académico v1.0</div>
+        <div>Visual Studio Community .NET 10</div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="page-title-container">
+          <h1 id="page-title">Dashboard Principal</h1>
+        </div>
+        <div class="user-badge">
+          <div class="user-avatar">A</div>
+          <span>Administrador</span>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <!-- Alert Notification Box -->
+        <div id="alert-box" class="alert"></div>
+
+        <!-- 1. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-section active">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon">👥</div>
+              <div class="metric-info">
+                <h3>Total Clientes</h3>
+                <div class="metric-value" id="dash-clientes">0</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon">🍽️</div>
+              <div class="metric-info">
+                <h3>Platos Registrados</h3>
+                <div class="metric-value" id="dash-platos">0</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon">🟢</div>
+              <div class="metric-info">
+                <h3>Mesas Disponibles</h3>
+                <div class="metric-value" id="dash-mesas-disponibles">0</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon">🔴</div>
+              <div class="metric-info">
+                <h3>Mesas Ocupadas</h3>
+                <div class="metric-value" id="dash-mesas-ocupadas">0</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon">📦</div>
+              <div class="metric-info">
+                <h3>Pedidos Hoy</h3>
+                <div class="metric-value" id="dash-pedidos-hoy">0</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon">💵</div>
+              <div class="metric-info">
+                <h3>Ventas Hoy</h3>
+                <div class="metric-value" id="dash-ventas-hoy">$0.00</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Pedidos Recientes del Día</h3>
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID Pedido</th>
+                    <th>Cliente</th>
+                    <th>Cédula</th>
+                    <th>Mesa</th>
+                    <th>Fecha / Hora</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-table-body">
+                  <tr><td colspan="7" style="text-align:center;">Cargando pedidos...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. CLIENTES VIEW -->
+        <section id="view-clientes" class="view-section">
+          <div class="section-header">
+            <h2>Gestión de Clientes</h2>
+            <button type="button" class="btn btn-primary" onclick="openClienteModal()">
+              <span>+ Nuevo Cliente</span>
+            </button>
+          </div>
+
+          <div class="filter-bar">
+            <div class="input-group">
+              <label for="cliente-search">Buscar cliente</label>
+              <input type="text" id="cliente-search" class="form-control" placeholder="Buscar por nombre, apellido, cédula o email...">
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cédula</th>
+                  <th>Cliente</th>
+                  <th>Teléfono</th>
+                  <th>Correo Electrónico</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="clientes-table-body">
+                <tr><td colspan="7" style="text-align:center;">Cargando clientes...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 3. PLATOS VIEW -->
+        <section id="view-platos" class="view-section">
+          <div class="section-header">
+            <h2>Menú de Platos</h2>
+            <button type="button" class="btn btn-primary" onclick="openPlatoModal()">
+              <span>+ Nuevo Plato</span>
+            </button>
+          </div>
+
+          <div class="filter-bar">
+            <div class="input-group">
+              <label for="plato-categoria-filter">Categoría</label>
+              <select id="plato-categoria-filter" class="form-control">
+                <option value="">Todas las categorías</option>
+                <option value="Platos Fuertes">Platos Fuertes</option>
+                <option value="Mariscos">Mariscos</option>
+                <option value="Bebidas">Bebidas</option>
+                <option value="Postres">Postres</option>
+                <option value="Entradas">Entradas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre del Plato</th>
+                  <th>Categoría</th>
+                  <th>Descripción</th>
+                  <th>Precio Unitario</th>
+                  <th>Disponibilidad</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="platos-table-body">
+                <tr><td colspan="8" style="text-align:center;">Cargando menú de platos...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 4. MESAS VIEW -->
+        <section id="view-mesas" class="view-section">
+          <div class="section-header">
+            <h2>Gestión de Mesas</h2>
+            <button type="button" class="btn btn-primary" onclick="openMesaModal()">
+              <span>+ Nueva Mesa</span>
+            </button>
+          </div>
+
+          <div class="tables-grid" id="mesas-grid">
+            <!-- Table cards rendered dynamically -->
+          </div>
+        </section>
+
+        <!-- 5. PEDIDOS VIEW -->
+        <section id="view-pedidos" class="view-section">
+          <div class="section-header">
+            <h2>Gestión de Pedidos</h2>
+            <button type="button" class="btn btn-primary" onclick="toggleOrderCreationForm(true)">
+              <span>+ Crear Nuevo Pedido</span>
+            </button>
+          </div>
+
+          <!-- Order Creation Panel Wizard -->
+          <div id="order-creation-card" class="card" style="display: none;">
+            <div class="section-header" style="margin-bottom: 1rem;">
+              <h3>Registrar Nuevo Pedido</h3>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="toggleOrderCreationForm(false)">Cancelar</button>
+            </div>
+
+            <div class="order-builder-layout">
+              <!-- Left side: Dish Selection -->
+              <div>
+                <div class="filter-bar">
+                  <div class="input-group">
+                    <label for="order-cliente-select">Cliente (* Obligatorio)</label>
+                    <select id="order-cliente-select" class="form-control">
+                      <option value="">Seleccione un cliente...</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <label for="order-mesa-select">Mesa (Opcional)</label>
+                    <select id="order-mesa-select" class="form-control">
+                      <option value="">Sin mesa asignada</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="card-title" style="margin-top: 1rem;">Seleccione los platos</div>
+                <div class="dish-selector-grid" id="order-dish-grid">
+                  <!-- Dish items populated via JS -->
+                </div>
+              </div>
+
+              <!-- Right side: Cart Summary -->
+              <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.25rem;">
+                <h4 style="margin-bottom: 1rem; color: var(--text-main);">Resumen del Pedido</h4>
+
+                <div class="cart-items" id="cart-items-container">
+                  <div style="text-align: center; color: var(--text-dim); padding: 2rem 0;">No ha seleccionado ningún plato.</div>
+                </div>
+
+                <div class="order-total-summary">
+                  <span class="order-total-label">Total a Pagar:</span>
+                  <span class="order-total-amount" id="cart-total-amount">$0.00</span>
+                </div>
+
+                <button type="button" class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="guardarNuevoPedido()">
+                  <span>Confirmar y Guardar Pedido</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Existing Orders History List -->
+          <div class="card">
+            <div class="filter-bar">
+              <div class="input-group">
+                <label for="order-filter-estado">Filtrar por Estado</label>
+                <select id="order-filter-estado" class="form-control">
+                  <option value="">Todos los estados</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="EnPreparacion">En Preparación</option>
+                  <option value="Completado">Completado</option>
+                  <option value="Cancelado">Cancelado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID Pedido</th>
+                    <th>Cliente</th>
+                    <th>Mesa</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="pedidos-table-body">
+                  <tr><td colspan="7" style="text-align:center;">Cargando historial de pedidos...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. REPORTES VIEW -->
+        <section id="view-reportes" class="view-section">
+          <div class="section-header">
+            <h2>Reporte de Historial por Cliente</h2>
+            <button type="button" class="btn btn-primary" onclick="window.print()">
+              <span>🖨️ Imprimir Reporte</span>
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="filter-bar">
+              <div class="input-group">
+                <label for="reporte-cliente-select">Seleccionar Cliente</label>
+                <select id="reporte-cliente-select" class="form-control">
+                  <option value="">Seleccione un cliente...</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="reporte-fecha-inicio">Fecha Inicial</label>
+                <input type="date" id="reporte-fecha-inicio" class="form-control">
+              </div>
+              <div class="input-group">
+                <label for="reporte-fecha-fin">Fecha Final</label>
+                <input type="date" id="reporte-fecha-fin" class="form-control">
+              </div>
+              <div class="input-group">
+                <label for="reporte-estado-select">Estado del Pedido</label>
+                <select id="reporte-estado-select" class="form-control">
+                  <option value="">Todos los estados</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="EnPreparacion">En Preparación</option>
+                  <option value="Completado">Completado</option>
+                  <option value="Cancelado">Cancelado</option>
+                </select>
+              </div>
+              <div style="display: flex; align-items: flex-end;">
+                <button type="button" class="btn btn-primary" onclick="cargarReporteCliente()">Generar Reporte</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="reporte-resultado-container">
+            <div style="text-align: center; color: var(--text-dim); padding: 3rem;" class="card">
+              Seleccione un cliente y haga clic en "Generar Reporte" para visualizar su historial detallado.
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Modal Cliente -->
+  <div id="modal-cliente" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-cliente-title">Registrar Cliente</h3>
+        <button type="button" class="modal-close" onclick="closeClienteModal()">×</button>
+      </div>
+      <form id="form-cliente" onsubmit="guardarCliente(event)">
+        <input type="hidden" id="cliente-id">
+        <div class="modal-body">
+          <div class="input-group">
+            <label for="cliente-nombre">Nombre (*)</label>
+            <input type="text" id="cliente-nombre" class="form-control" required placeholder="Ej. Juan">
+          </div>
+          <div class="input-group">
+            <label for="cliente-apellido">Apellido (*)</label>
+            <input type="text" id="cliente-apellido" class="form-control" required placeholder="Ej. Pérez">
+          </div>
+          <div class="input-group">
+            <label for="cliente-cedula">Cédula Ecuatoriana (10 dígitos) (*)</label>
+            <input type="text" id="cliente-cedula" class="form-control" required maxlength="10" placeholder="Ej. 1710034065">
+          </div>
+          <div class="input-group">
+            <label for="cliente-telefono">Teléfono</label>
+            <input type="text" id="cliente-telefono" class="form-control" placeholder="Ej. 0991234567">
+          </div>
+          <div class="input-group">
+            <label for="cliente-email">Correo Electrónico</label>
+            <input type="email" id="cliente-email" class="form-control" placeholder="Ej. juan.perez@example.com">
+          </div>
+          <div class="input-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" id="cliente-activo" checked style="width: 18px; height: 18px;">
+            <label for="cliente-activo" style="margin: 0; cursor: pointer;">Cliente Activo</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeClienteModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Plato -->
+  <div id="modal-plato" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-plato-title">Registrar Plato</h3>
+        <button type="button" class="modal-close" onclick="closePlatoModal()">×</button>
+      </div>
+      <form id="form-plato" onsubmit="guardarPlato(event)">
+        <input type="hidden" id="plato-id">
+        <div class="modal-body">
+          <div class="input-group">
+            <label for="plato-nombre">Nombre del Plato (*)</label>
+            <input type="text" id="plato-nombre" class="form-control" required placeholder="Ej. Encebollado Mixto">
+          </div>
+          <div class="input-group">
+            <label for="plato-categoria">Categoría (*)</label>
+            <select id="plato-categoria" class="form-control" required>
+              <option value="Platos Fuertes">Platos Fuertes</option>
+              <option value="Mariscos">Mariscos</option>
+              <option value="Bebidas">Bebidas</option>
+              <option value="Postres">Postres</option>
+              <option value="Entradas">Entradas</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="plato-precio">Precio ($ USD) (*)</label>
+            <input type="number" step="0.01" min="0.01" id="plato-precio" class="form-control" required placeholder="Ej. 5.50">
+          </div>
+          <div class="input-group">
+            <label for="plato-descripcion">Descripción</label>
+            <textarea id="plato-descripcion" class="form-control" rows="3" placeholder="Descripción breve del plato..."></textarea>
+          </div>
+          <div class="input-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" id="plato-disponible" checked style="width: 18px; height: 18px;">
+            <label for="plato-disponible" style="margin: 0; cursor: pointer;">Disponible para pedidos</label>
+          </div>
+          <div class="input-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" id="plato-activo" checked style="width: 18px; height: 18px;">
+            <label for="plato-activo" style="margin: 0; cursor: pointer;">Registro Activo</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closePlatoModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Mesa -->
+  <div id="modal-mesa" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-mesa-title">Registrar Mesa</h3>
+        <button type="button" class="modal-close" onclick="closeMesaModal()">×</button>
+      </div>
+      <form id="form-mesa" onsubmit="guardarMesa(event)">
+        <input type="hidden" id="mesa-id">
+        <div class="modal-body">
+          <div class="input-group">
+            <label for="mesa-numero">Número de Mesa (*)</label>
+            <input type="number" min="1" id="mesa-numero" class="form-control" required placeholder="Ej. 1">
+          </div>
+          <div class="input-group">
+            <label for="mesa-capacidad">Capacidad de Personas (*)</label>
+            <input type="number" min="1" id="mesa-capacidad" class="form-control" required placeholder="Ej. 4">
+          </div>
+          <div class="input-group">
+            <label for="mesa-estado">Estado Actual (*)</label>
+            <select id="mesa-estado" class="form-control" required>
+              <option value="Disponible">Disponible</option>
+              <option value="Ocupada">Ocupada</option>
+              <option value="Reservada">Reservada</option>
+            </select>
+          </div>
+          <div class="input-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" id="mesa-activo" checked style="width: 18px; height: 18px;">
+            <label for="mesa-activo" style="margin: 0; cursor: pointer;">Mesa Habilitada / Activa</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeMesaModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Ver / Cambiar Estado Pedido -->
+  <div id="modal-pedido-detalle" class="modal-overlay">
+    <div class="modal" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-pedido-title">Detalle del Pedido #</h3>
+        <button type="button" class="modal-close" onclick="closePedidoDetalleModal()">×</button>
+      </div>
+      <div class="modal-body" id="modal-pedido-content">
+        <!-- Rendered via JS -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closePedidoDetalleModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
